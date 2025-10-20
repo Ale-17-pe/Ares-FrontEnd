@@ -1,0 +1,639 @@
+/* AdminPlanesPage.css */
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.admin-planes-page {
+    background-color: #000;
+    color: #fff;
+    font-family: 'Arial', sans-serif;
+    line-height: 1.6;
+    overflow-x: hidden;
+    animation: fadeIn 0.5s ease-out;
+}
+
+/* Hero Section */
+.hero-admin {
+    height: 40vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 80px;
+    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
+                url('/assets/Imagenes/admin-hero.jpg') no-repeat center center/cover;
+}
+
+.hero-overlay {
+    text-align: center;
+    color: white;
+}
+
+.hero-content h1 {
+    font-size: 3rem;
+    font-family: 'Anton', sans-serif;
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.hero-content p {
+    font-size: 1.2rem;
+    max-width: 600px;
+    margin: 0 auto;
+    color: #ffd500;
+}
+
+/* Stats Section */
+.admin-stats-section {
+    padding: 60px 20px;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.stats-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+}
+
+.stat-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 213, 0, 0.2);
+    border-radius: 15px;
+    padding: 30px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(255, 213, 0, 0.4);
+    box-shadow: 0 10px 20px rgba(255, 213, 0, 0.1);
+}
+
+.stat-icon {
+    font-size: 3rem;
+    color: #ffd500;
+}
+
+.stat-content h3 {
+    font-size: 2.5rem;
+    color: #ffd500;
+    margin: 0;
+    font-family: 'Anton', sans-serif;
+}
+
+.stat-content p {
+    color: #7f7676;
+    margin: 5px 0 0 0;
+    font-size: 1rem;
+}
+
+/* Herramientas Section */
+.herramientas-section {
+    background: rgba(15, 14, 13, 0.95);
+    padding: 30px 20px;
+    border-bottom: 1px solid rgba(255, 213, 0, 0.1);
+}
+
+.herramientas-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 30px;
+    flex-wrap: wrap;
+}
+
+.search-bar {
+    position: relative;
+    flex: 1;
+    min-width: 300px;
+}
+
+.search-icon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #7f7676;
+    font-size: 1.1rem;
+}
+
+.search-input {
+    width: 100%;
+    padding: 12px 15px 12px 45px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 213, 0, 0.2);
+    border-radius: 8px;
+    color: white;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: #ffd500;
+    background: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 0 0 2px rgba(255, 213, 0, 0.2);
+}
+
+.herramientas-derecha {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.acciones-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-recargar, .btn-nuevo {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.9rem;
+}
+
+.btn-recargar {
+    background: transparent;
+    color: #ffd500;
+    border: 1px solid #ffd500;
+}
+
+.btn-recargar:hover {
+    background: rgba(255, 213, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+.btn-nuevo {
+    background: linear-gradient(135deg, #ffd500, #ff9900);
+    color: #2c2c2c;
+}
+
+.btn-nuevo:hover {
+    background: linear-gradient(135deg, #ff9900, #ffd500);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 213, 0, 0.3);
+}
+
+/* Tabla Section */
+.tabla-section {
+    padding: 60px 20px;
+}
+
+.section-title {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.section-title h2 {
+    color: #ffd500;
+    font-size: 2.2rem;
+    font-family: 'Anton', sans-serif;
+    margin-bottom: 15px;
+}
+
+.title-line {
+    width: 80px;
+    height: 3px;
+    background: #ffd500;
+    margin: 0 auto 20px;
+}
+
+.section-title p {
+    color: #7f7676;
+    font-size: 1rem;
+}
+
+.tabla-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 213, 0, 0.2);
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.tabla-responsive {
+    overflow-x: auto;
+}
+
+.tabla-planes {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 1000px;
+}
+
+.tabla-planes th {
+    background: rgba(255, 213, 0, 0.1);
+    color: #ffd500;
+    padding: 15px 12px;
+    text-align: left;
+    font-weight: bold;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-bottom: 1px solid rgba(255, 213, 0, 0.2);
+}
+
+.tabla-planes th:hover {
+    background: rgba(255, 213, 0, 0.15);
+}
+
+.tabla-planes th span {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.fila-plan {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+}
+
+.fila-plan:hover {
+    background: rgba(255, 213, 0, 0.05);
+}
+
+.tabla-planes td {
+    padding: 12px;
+    vertical-align: middle;
+}
+
+.celda-id {
+    color: #7f7676;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+.info-plan {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.plan-nombre {
+    font-weight: bold;
+    color: #fff;
+    font-size: 1rem;
+}
+
+.plan-descripcion {
+    color: #7f7676;
+    font-size: 0.9rem;
+    max-width: 300px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.celda-precio, .celda-duracion {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    font-weight: bold;
+}
+
+.celda-precio span, .celda-duracion span {
+    color: #ffd500;
+    font-size: 0.8rem;
+}
+
+.acciones-grid {
+    display: flex;
+    gap: 5px;
+}
+
+.btn-accion {
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+}
+
+.btn-editar {
+    background: rgba(76, 175, 80, 0.2);
+    color: #4caf50;
+}
+
+.btn-editar:hover {
+    background: #4caf50;
+    color: white;
+    transform: scale(1.1);
+}
+
+.btn-eliminar {
+    background: rgba(244, 67, 54, 0.2);
+    color: #f44336;
+}
+
+.btn-eliminar:hover {
+    background: #f44336;
+    color: white;
+    transform: scale(1.1);
+}
+
+/* No Resultados */
+.no-resultados {
+    padding: 60px 20px;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.no-resultados div {
+    font-size: 3rem;
+    color: #ffd500;
+    margin-bottom: 20px;
+}
+
+.no-resultados h3 {
+    color: #ffd500;
+    margin-bottom: 10px;
+    font-size: 1.5rem;
+}
+
+.no-resultados p {
+    color: #7f7676;
+    font-size: 1.1rem;
+    margin-bottom: 20px;
+}
+
+.resumen-tabla {
+    padding: 20px;
+    text-align: center;
+    border-top: 1px solid rgba(255, 213, 0, 0.2);
+    color: #7f7676;
+    font-size: 0.9rem;
+}
+
+/* Modal */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    padding: 20px;
+    backdrop-filter: blur(5px);
+}
+
+.modal-content {
+    background: rgba(15, 14, 13, 0.95);
+    border: 2px solid rgba(255, 213, 0, 0.3);
+    border-radius: 15px;
+    max-width: 600px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    animation: fadeIn 0.3s ease-out;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+}
+
+.modal-close {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 2rem;
+    cursor: pointer;
+    z-index: 1;
+    transition: color 0.3s ease;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.modal-close:hover {
+    color: #ffd500;
+    background: rgba(255, 213, 0, 0.1);
+}
+
+.modal-header {
+    background: rgba(255, 213, 0, 0.1);
+    padding: 30px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    border-bottom: 1px solid rgba(255, 213, 0, 0.2);
+}
+
+.plan-icon-large {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ffd500, #ff9900);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: #2c2c2c;
+    font-size: 2rem;
+}
+
+.plan-info-modal h2 {
+    color: #ffd500;
+    margin: 0 0 5px 0;
+    font-size: 1.6rem;
+}
+
+.plan-info-modal .plan-subtitle {
+    color: #7f7676;
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+.modal-body {
+    padding: 30px;
+}
+
+.plan-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-group label {
+    color: #ffd500;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+.form-group input, .form-group textarea {
+    padding: 12px 15px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 213, 0, 0.2);
+    border-radius: 8px;
+    color: white;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.form-group input:focus, .form-group textarea:focus {
+    outline: none;
+    border-color: #ffd500;
+    background: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 0 0 2px rgba(255, 213, 0, 0.2);
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.error-message {
+    color: #f44336;
+    background: rgba(244, 67, 54, 0.1);
+    padding: 10px 15px;
+    border-radius: 8px;
+    border-left: 3px solid #f44336;
+    font-size: 0.9rem;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+}
+
+.modal-actions button {
+    flex: 1;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-width: 140px;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #ffd500, #ff9900);
+    color: #2c2c2c;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #ff9900, #ffd500);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 213, 0, 0.3);
+}
+
+.btn-secondary {
+    background: transparent;
+    color: #ffd500;
+    border: 2px solid #ffd500;
+}
+
+.btn-secondary:hover {
+    background: rgba(255, 213, 0, 0.1);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .herramientas-container {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .herramientas-derecha {
+        justify-content: space-between;
+    }
+    
+    .tabla-container {
+        margin: 0 10px;
+    }
+    
+    .modal-actions {
+        flex-direction: column;
+    }
+    
+    .stats-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+    
+    .modal-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 15px;
+    }
+    
+    .hero-content h1 {
+        font-size: 2.2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .stats-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .acciones-buttons {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .tabla-section {
+        padding: 30px 10px;
+    }
+    
+    .hero-admin {
+        height: 30vh;
+    }
+    
+    .hero-content h1 {
+        font-size: 1.8rem;
+    }
+    
+    .hero-content p {
+        font-size: 1rem;
+    }
+}

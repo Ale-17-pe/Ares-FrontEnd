@@ -1,0 +1,972 @@
+/* AdminSuscripcionesPage.css */
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.admin-suscripciones-page {
+    background-color: #000;
+    color: #fff;
+    font-family: 'Arial', sans-serif;
+    line-height: 1.6;
+    overflow-x: hidden;
+    animation: fadeIn 0.5s ease-out;
+}
+/* Hero Section */
+.hero-suscripciones {
+    height: 40vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 80px;
+    background: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0)), 
+                url('https://s.yimg.com/ny/api/res/1.2/KogjBr0gqQs8ZzMzvmmbKA--/YXBwaWQ9aGlnaGxhbmRlcjt3PTY0MDtoPTQ3NDtjZj13ZWJw/https://media.zenfs.com/en/onefootball_articles_802/c09ebe0fb18192309f69b7af2f0a742f') no-repeat center center/cover;
+}
+
+.hero-overlay {
+    text-align: center;
+    color: white;
+}
+
+.hero-content h1 {
+    font-size: 3rem;
+    font-family: 'Anton', sans-serif;
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.hero-content p {
+    font-size: 1.2rem;
+    max-width: 600px;
+    margin: 0 auto;
+    color: #ffd500;
+}
+
+/* Stats Section */
+.stats-suscripciones {
+    padding: 60px 20px;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.stats-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+}
+
+.stat-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 213, 0, 0.2);
+    border-radius: 15px;
+    padding: 30px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(255, 213, 0, 0.4);
+    box-shadow: 0 10px 20px rgba(255, 213, 0, 0.1);
+}
+
+.stat-icon {
+    font-size: 3rem;
+    color: #ffd500;
+}
+
+.stat-content h3 {
+    font-size: 2.5rem;
+    color: #ffd500;
+    margin: 0;
+    font-family: 'Anton', sans-serif;
+}
+
+.stat-content p {
+    color: #7f7676;
+    margin: 5px 0 0 0;
+    font-size: 1rem;
+}
+
+/* Herramientas Section */
+.herramientas-section {
+    background: rgba(15, 14, 13, 0.95);
+    padding: 30px 20px;
+    border-bottom: 1px solid rgba(255, 213, 0, 0.1);
+}
+
+.herramientas-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 30px;
+    flex-wrap: wrap;
+}
+
+.search-bar {
+    position: relative;
+    flex: 1;
+    min-width: 300px;
+}
+
+.search-icon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #7f7676;
+    font-size: 1.1rem;
+}
+
+.search-input {
+    width: 100%;
+    padding: 12px 15px 12px 45px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 213, 0, 0.2);
+    border-radius: 8px;
+    color: white;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: #ffd500;
+    background: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 0 0 2px rgba(255, 213, 0, 0.2);
+}
+
+.herramientas-derecha {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.filtro-buttons {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.filtro-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 213, 0, 0.2);
+    border-radius: 20px;
+    padding: 8px 16px;
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+.filtro-btn:hover {
+    background: rgba(255, 213, 0, 0.1);
+    border-color: rgba(255, 213, 0, 0.4);
+}
+
+.filtro-btn.active {
+    background: linear-gradient(135deg, #ffd500, #ff9900);
+    color: #2c2c2c;
+    border-color: #ffd500;
+}
+
+.acciones-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-recargar, .btn-exportar {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.9rem;
+}
+
+.btn-recargar {
+    background: transparent;
+    color: #ffd500;
+    border: 1px solid #ffd500;
+}
+
+.btn-recargar:hover {
+    background: rgba(255, 213, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+.btn-exportar {
+    background: linear-gradient(135deg, #28a745, #20c997);
+    color: white;
+}
+
+.btn-exportar:hover {
+    background: linear-gradient(135deg, #20c997, #28a745);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+}
+
+/* Tabla Section */
+.tabla-section {
+    padding: 60px 20px;
+}
+
+.section-title {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.section-title h2 {
+    color: #ffd500;
+    font-size: 2.2rem;
+    font-family: 'Anton', sans-serif;
+    margin-bottom: 15px;
+}
+
+.title-line {
+    width: 80px;
+    height: 3px;
+    background: #ffd500;
+    margin: 0 auto 20px;
+}
+
+.section-title p {
+    color: #7f7676;
+    font-size: 1rem;
+}
+
+.tabla-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 213, 0, 0.2);
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.tabla-responsive {
+    overflow-x: auto;
+}
+
+.tabla-suscripciones {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 1000px;
+}
+
+.tabla-suscripciones th {
+    background: rgba(255, 213, 0, 0.1);
+    color: #ffd500;
+    padding: 15px 12px;
+    text-align: left;
+    font-weight: bold;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-bottom: 1px solid rgba(255, 213, 0, 0.2);
+}
+
+.tabla-suscripciones th:hover {
+    background: rgba(255, 213, 0, 0.15);
+}
+
+.tabla-suscripciones th span {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.tabla-suscripciones th svg {
+    font-size: 0.8rem;
+}
+
+.fila-suscripcion {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+}
+
+.fila-suscripcion:hover {
+    background: rgba(255, 213, 0, 0.05);
+}
+
+.tabla-suscripciones td {
+    padding: 12px;
+    vertical-align: middle;
+}
+
+.celda-usuario {
+    min-width: 200px;
+}
+
+.info-usuario {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.avatar-mini {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ffd500, #ff9900);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: #2c2c2c;
+    font-size: 0.8rem;
+    flex-shrink: 0;
+}
+
+.nombre-completo {
+    font-weight: bold;
+    color: #fff;
+    font-size: 0.95rem;
+}
+
+.usuario-email {
+    font-size: 0.8rem;
+    color: #7f7676;
+}
+
+.celda-plan {
+    min-width: 120px;
+}
+
+.badge-plan {
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    color: #2c2c2c;
+    display: inline-block;
+    margin-bottom: 5px;
+}
+
+.plan-precio {
+    font-size: 0.9rem;
+    color: #ffd500;
+    font-weight: bold;
+}
+
+.celda-fecha {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    color: #fff;
+    position: relative;
+}
+
+.celda-fecha svg {
+    color: #ffd500;
+    font-size: 0.8rem;
+}
+
+.dias-restantes {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    padding: 2px 6px;
+    border-radius: 8px;
+    font-size: 0.7rem;
+    font-weight: bold;
+}
+
+.dias-restantes.advertencia {
+    background: #ffc107;
+    color: #2c2c2c;
+}
+
+.dias-restantes.vencido {
+    background: #dc3545;
+    color: white;
+}
+
+.celda-estado {
+    min-width: 120px;
+}
+
+.estado-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.badge-estado {
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    color: white;
+}
+
+.celda-pago {
+    min-width: 150px;
+}
+
+.pago-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.proximo-pago {
+    font-weight: bold;
+    color: #fff;
+    font-size: 0.9rem;
+}
+
+.metodo-pago {
+    font-size: 0.8rem;
+    color: #7f7676;
+}
+
+.celda-acciones {
+    min-width: 140px;
+}
+
+.acciones-grid {
+    display: flex;
+    gap: 5px;
+}
+
+.btn-accion {
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+}
+
+.btn-ver {
+    background: rgba(33, 150, 243, 0.2);
+    color: #2196f3;
+}
+
+.btn-ver:hover {
+    background: #2196f3;
+    color: white;
+    transform: scale(1.1);
+}
+
+.btn-editar {
+    background: rgba(76, 175, 80, 0.2);
+    color: #4caf50;
+}
+
+.btn-editar:hover {
+    background: #4caf50;
+    color: white;
+    transform: scale(1.1);
+}
+
+.btn-renovar {
+    background: rgba(255, 193, 7, 0.2);
+    color: #ffc107;
+}
+
+.btn-renovar:hover {
+    background: #ffc107;
+    color: #2c2c2c;
+    transform: scale(1.1);
+}
+
+.btn-suspender {
+    background: rgba(255, 152, 0, 0.2);
+    color: #ff9800;
+}
+
+.btn-suspender:hover {
+    background: #ff9800;
+    color: white;
+    transform: scale(1.1);
+}
+
+/* No Resultados */
+.no-resultados {
+    padding: 60px 20px;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.no-resultados svg {
+    color: #ffd500;
+    margin-bottom: 20px;
+}
+
+.no-resultados h3 {
+    color: #ffd500;
+    margin-bottom: 10px;
+    font-size: 1.5rem;
+}
+
+.no-resultados p {
+    color: #7f7676;
+    font-size: 1.1rem;
+}
+
+.resumen-tabla {
+    padding: 20px;
+    text-align: center;
+    border-top: 1px solid rgba(255, 213, 0, 0.2);
+    color: #7f7676;
+    font-size: 0.9rem;
+}
+
+/* Modal */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    padding: 20px;
+    backdrop-filter: blur(5px);
+}
+
+.modal-content {
+    background: rgba(15, 14, 13, 0.95);
+    border: 2px solid rgba(255, 213, 0, 0.3);
+    border-radius: 15px;
+    max-width: 700px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    animation: fadeIn 0.3s ease-out;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+}
+
+.modal-close {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 2rem;
+    cursor: pointer;
+    z-index: 1;
+    transition: color 0.3s ease;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.modal-close:hover {
+    color: #ffd500;
+    background: rgba(255, 213, 0, 0.1);
+}
+
+.modal-header {
+    background: rgba(255, 213, 0, 0.1);
+    padding: 30px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    border-bottom: 1px solid rgba(255, 213, 0, 0.2);
+}
+
+.suscripcion-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ffd500, #ff9900);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: #2c2c2c;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.suscripcion-info h2 {
+    color: #ffd500;
+    margin: 0 0 5px 0;
+    font-size: 1.6rem;
+}
+
+.suscripcion-info .suscripcion-email {
+    color: #7f7676;
+    margin: 0 0 15px 0;
+}
+
+.badges-container {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.plan-badge, .estado-badge {
+    padding: 5px 15px;
+    border-radius: 15px;
+    font-weight: bold;
+    font-size: 0.9rem;
+    color: #2c2c2c;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.modal-body {
+    padding: 30px;
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    margin-bottom: 30px;
+}
+
+.info-section h3 {
+    color: #ffd500;
+    margin-bottom: 15px;
+    font-size: 1.3rem;
+    border-bottom: 1px solid rgba(255, 213, 0, 0.2);
+    padding-bottom: 8px;
+}
+
+.info-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    color: #fff;
+}
+
+.info-item svg {
+    color: #ffd500;
+    width: 16px;
+}
+
+.historial-section {
+    margin-bottom: 30px;
+}
+
+.historial-section h3 {
+    color: #ffd500;
+    margin-bottom: 15px;
+    font-size: 1.3rem;
+}
+
+.historial-list {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    padding: 15px;
+}
+
+.pago-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.pago-item:last-child {
+    border-bottom: none;
+}
+
+.pago-fecha {
+    color: #fff;
+    font-size: 0.9rem;
+}
+
+.pago-monto {
+    color: #ffd500;
+    font-weight: bold;
+}
+
+.pago-estado {
+    padding: 4px 8px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+.pago-estado.completado {
+    background: #28a745;
+    color: white;
+}
+
+.pago-estado.pendiente {
+    background: #ffc107;
+    color: #2c2c2c;
+}
+
+.sin-historial {
+    text-align: center;
+    color: #7f7676;
+    font-style: italic;
+    padding: 20px;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.modal-actions button {
+    flex: 1;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-width: 140px;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #ffd500, #ff9900);
+    color: #2c2c2c;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #ff9900, #ffd500);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 213, 0, 0.3);
+}
+
+.btn-secondary {
+    background: transparent;
+    color: #ffd500;
+    border: 2px solid #ffd500;
+}
+
+.btn-secondary:hover {
+    background: rgba(255, 213, 0, 0.1);
+}
+
+.btn-warning {
+    background: transparent;
+    color: #ffc107;
+    border: 2px solid #ffc107;
+}
+
+.btn-warning:hover {
+    background: rgba(255, 193, 7, 0.1);
+}
+
+.btn-danger {
+    background: transparent;
+    color: #dc3545;
+    border: 2px solid #dc3545;
+}
+
+.btn-danger:hover {
+    background: #dc3545;
+    color: white;
+}
+
+/* Loading State */
+.admin-suscripciones-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background: #000;
+}
+
+.loading-spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid rgba(255, 213, 0, 0.3);
+    border-top: 4px solid #ffd500;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 20px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Footer Styles */
+.main-footer {
+    background: linear-gradient(to bottom, #0f0e0d, #000);
+    color: #7f7676;
+    border-top: 1px solid rgba(255, 213, 0, 0.1);
+}
+
+.footer-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 50px 20px 30px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 40px;
+}
+
+.footer-section h3 {
+    color: #ffd500;
+    margin-bottom: 20px;
+    font-size: 1.2rem;
+}
+
+.logo-footer img {
+    height: 50px;
+    margin-bottom: 15px;
+}
+
+.footer-social {
+    display: flex;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.footer-social a {
+    color: #7f7676;
+    font-size: 1.2rem;
+    transition: color 0.3s ease;
+}
+
+.footer-social a:hover {
+    color: #ffd500;
+}
+
+.footer-section ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-section ul li {
+    margin-bottom: 10px;
+}
+
+.footer-section ul li a {
+    color: #7f7676;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.footer-section ul li a:hover {
+    color: #ffd500;
+}
+
+.contact-info p {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.footer-bottom {
+    border-top: 1px solid rgba(255, 213, 0, 0.1);
+    padding: 20px 0;
+    text-align: center;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .herramientas-container {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .herramientas-derecha {
+        justify-content: space-between;
+    }
+    
+    .tabla-container {
+        margin: 0 10px;
+    }
+    
+    .modal-actions {
+        flex-direction: column;
+    }
+    
+    .stats-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .modal-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 15px;
+    }
+    
+    .hero-content h1 {
+        font-size: 2.2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .stats-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .filtro-buttons {
+        justify-content: center;
+    }
+    
+    .acciones-buttons {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .tabla-section {
+        padding: 30px 10px;
+    }
+    
+    .hero-suscripciones {
+        height: 30vh;
+    }
+    
+    .hero-content h1 {
+        font-size: 1.8rem;
+    }
+    
+    .hero-content p {
+        font-size: 1rem;
+    }
+    
+    .modal-content {
+        margin: 10px;
+    }
+}
