@@ -39,6 +39,7 @@ function Header() {
                 <div className="logo-container">
                     <Link to={isAdmin ? "/admin" : "/"} onClick={closeMenu}>
                         <img src={logo} alt="Logo Ares Fitness" />
+
                     </Link>
                 </div>
 

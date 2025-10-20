@@ -3,7 +3,6 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom'; // 1. Importar useNavigate
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShieldAlt, faTachometerAlt, faSignOutAlt, faChartLine, faDumbbell } from '@fortawesome/free-solid-svg-icons';
-import logo from "../assets/Imagenes/logo.png";
 import { useAuth } from '../context/AuthContext';
 import { useHomeEffects } from '../hooks/useHomeEffects'; // Asumo que este es el nombre correcto de tu hook
 
