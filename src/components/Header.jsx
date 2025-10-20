@@ -6,9 +6,9 @@ import logo from "../assets/Imagenes/logo.png";
 import { useAuth } from '../context/AuthContext';
 
 import {
-    faHome, faMapMarkerAlt, faDumbbell, faCrown, faUsers,
-    faUser, faSignInAlt, faUserPlus, faSignOutAlt, 
-    faTachometerAlt, faShieldAlt, faBars, faTimes
+    faMapMarkerAlt, faRunning, faCrown, faUser, faSignInAlt, faUserPlus,
+    faSignOutAlt, faTachometerAlt, faBars, faTimes, faChevronDown,
+    faShieldAlt, faDumbbell, faHome, faUsers
 } from '@fortawesome/free-solid-svg-icons';
 
 import { useHomeEffects } from '../hooks/useHomeEffects';
@@ -33,105 +33,133 @@ function Header() {
     const isAdmin = usuario && (usuario.rol === 'admin' || usuario.rol === 'recepcionista');
 
     return (
-        <header className="portfolio-header">
+        <header className="main-header">
             <div className="header-container">
-                {/* Logo Minimalista */}
-                <div className="logo-section">
-                    <Link to={isAdmin ? "/admin" : "/"} className="logo-link" onClick={closeMenu}>
-                        <img src={logo} alt="Ares Fitness" className="logo-img" />
-                        <span className="logo-text">ARES FITNESS</span>
+                {/* Logo */}
+                <div className="logo-container">
+                    <Link to={isAdmin ? "/admin" : "/"} onClick={closeMenu}>
+                        <img src={logo} alt="Logo Ares Fitness" />
                     </Link>
                 </div>
 
-                {/* Navegación Principal - Estilo Tabla */}
+                {/* Navegación Principal - Solo para no admin */}
                 {!isAdmin && (
-                    <nav className={`nav-section ${isMenuOpen ? 'active' : ''}`} ref={menuRef}>
-                        <div className="nav-grid">
-                            <Link to="/" className="nav-item" onClick={closeMenu}>
-                                <FontAwesomeIcon icon={faHome} />
-                                <span>Inicio</span>
-                            </Link>
-                            <Link to="/ubicacion" className="nav-item" onClick={closeMenu}>
-                                <FontAwesomeIcon icon={faMapMarkerAlt} />
-                                <span>Ubicación</span>
-                            </Link>
-                            <Link to="/ejercicios" className="nav-item" onClick={closeMenu}>
-                                <FontAwesomeIcon icon={faDumbbell} />
-                                <span>Ejercicios</span>
-                            </Link>
-                            <Link to="/planes" className="nav-item" onClick={closeMenu}>
-                                <FontAwesomeIcon icon={faCrown} />
-                                <span>Membresías</span>
-                            </Link>
-                            <Link to="/nosotros" className="nav-item" onClick={closeMenu}>
-                                <FontAwesomeIcon icon={faUsers} />
-                                <span>Nosotros</span>
-                            </Link>
+                    <nav className={`main-nav ${isMenuOpen ? 'active' : ''}`} ref={menuRef}>
+                        <ul>
+                            <li>
+                                <Link to="/" onClick={closeMenu}>
+                                    <FontAwesomeIcon icon={faHome} /> INICIO
+                                </Link>
+                            </li>
+                            <li>
+                                <Link to="/ubicacion" onClick={closeMenu}>
+                                    <FontAwesomeIcon icon={faMapMarkerAlt} /> UBICACIÓN
+                                </Link>
+                            </li>
+                            <li>
+                                <Link to="/ejercicios" onClick={closeMenu}>
+                                    <FontAwesomeIcon icon={faRunning} /> EJERCICIOS
+                                </Link>
+                            </li>
+                            <li>
+                                <Link to="/planes" onClick={closeMenu}>
+                                    <FontAwesomeIcon icon={faCrown} /> MEMBRESÍAS
+                                </Link>
+                            </li>
+                            <li>
+                                <Link to="/nosotros" onClick={closeMenu}>
+                                    <FontAwesomeIcon icon={faUsers} /> NOSOTROS
+                                </Link>
+                            </li>
+                        </ul>
+
+                        {/* Botones de acción en menú móvil */}
+                        <div className="mobile-actions">
+                            {!usuario ? (
+                                <div className="mobile-auth-buttons">
+                                    <Link to="/login" className="btn-login-mobile" onClick={closeMenu}>
+                                        <FontAwesomeIcon icon={faSignInAlt} /> Iniciar Sesión
+                                    </Link>
+                                    <Link to="/registro" className="btn-register-mobile" onClick={closeMenu}>
+                                        <FontAwesomeIcon icon={faUserPlus} /> Registrarse
+                                    </Link>
+                                </div>
+                            ) : (
+                                <div className="mobile-user-info">
+                                    <p>¡Hola, {usuario.nombre}!</p>
+                                    <Link to="/dashboard" className="btn-dashboard-mobile" onClick={closeMenu}>
+                                        <FontAwesomeIcon icon={faTachometerAlt} /> Mi Dashboard
+                                    </Link>
+                                    <button onClick={handleLogout} className="btn-logout-mobile">
+                                        <FontAwesomeIcon icon={faSignOutAlt} /> Cerrar Sesión
+                                    </button>
+                                </div>
+                            )}
                         </div>
                     </nav>
                 )}
 
-                {/* Sección de Usuario */}
-                <div className="user-section">
+                {/* Acciones de Usuario */}
+                <div className="header-actions">
                     {!usuario ? (
-                        <div className="auth-buttons">
-                            <Link to="/login" className="auth-btn login-btn">
-                                <FontAwesomeIcon icon={faSignInAlt} />
-                                <span>Ingresar</span>
-                            </Link>
-                            <Link to="/registro" className="auth-btn register-btn">
-                                <FontAwesomeIcon icon={faUserPlus} />
-                                <span>Registrarse</span>
-                            </Link>
+                        <div className="user-menu">
+                            <button className="user-btn" onClick={toggleDropdown} ref={dropdownBtnRef}>
+                                <FontAwesomeIcon icon={faUser} />
+                                <span>Mi Cuenta</span>
+                                <FontAwesomeIcon icon={faChevronDown} className="dropdown-arrow" />
+                            </button>
+                            <div className={`auth-dropdown ${isDropdownOpen ? 'show' : ''}`} ref={dropdownRef}>
+                                <Link to="/login" onClick={closeDropdown}>
+                                    <FontAwesomeIcon icon={faSignInAlt} /> Iniciar Sesión
+                                </Link>
+                                <Link to="/registro" onClick={closeDropdown}>
+                                    <FontAwesomeIcon icon={faUserPlus} /> Registrarse
+                                </Link>
+                            </div>
                         </div>
                     ) : isAdmin ? (
                         <div className="user-menu">
-                            <button className="user-profile admin-profile" onClick={toggleDropdown} ref={userMenuBtnRef}>
+                            <button className="user-btn admin-badge" onClick={toggleDropdown} ref={userMenuBtnRef}>
                                 <FontAwesomeIcon icon={faShieldAlt} />
-                                <span>Admin Panel</span>
+                                <span>Panel Admin</span>
                             </button>
-                            <div className={`profile-dropdown ${isDropdownOpen ? 'show' : ''}`} ref={authDropdownRef}>
+                            <div className={`auth-dropdown ${isDropdownOpen ? 'show' : ''}`} ref={authDropdownRef}>
                                 <Link to="/admin" onClick={closeDropdown}>
-                                    <FontAwesomeIcon icon={faTachometerAlt} />
-                                    <span>Dashboard</span>
+                                    <FontAwesomeIcon icon={faTachometerAlt} /> Panel de Control
                                 </Link>
                                 <Link to="/" onClick={closeDropdown}>
-                                    <FontAwesomeIcon icon={faHome} />
-                                    <span>Ir al Sitio</span>
+                                    <FontAwesomeIcon icon={faDumbbell} /> Ir al Sitio
                                 </Link>
-                                <button onClick={handleLogout} className="logout-btn">
-                                    <FontAwesomeIcon icon={faSignOutAlt} />
-                                    <span>Cerrar Sesión</span>
+                                <button onClick={handleLogout} className="btn-logout-dropdown">
+                                    <FontAwesomeIcon icon={faSignOutAlt} /> Cerrar Sesión
                                 </button>
                             </div>
                         </div>
                     ) : (
                         <div className="user-menu">
-                            <button className="user-profile" onClick={toggleDropdown} ref={userMenuBtnRef}>
+                            <button className="user-btn" onClick={toggleDropdown} ref={userMenuBtnRef}>
                                 <FontAwesomeIcon icon={faUser} />
-                                <span>Hola, {usuario.nombre}</span>
+                                <span>¡Hola, {usuario.nombre}!</span>
+                                <FontAwesomeIcon icon={faChevronDown} className="dropdown-arrow" />
                             </button>
-                            <div className={`profile-dropdown ${isDropdownOpen ? 'show' : ''}`} ref={authDropdownRef}>
+                            <div className={`auth-dropdown ${isDropdownOpen ? 'show' : ''}`} ref={authDropdownRef}>
                                 <Link to="/dashboard" onClick={closeDropdown}>
-                                    <FontAwesomeIcon icon={faTachometerAlt} />
-                                    <span>Mi Dashboard</span>
+                                    <FontAwesomeIcon icon={faTachometerAlt} /> Mi Dashboard
                                 </Link>
                                 <Link to="/perfil" onClick={closeDropdown}>
-                                    <FontAwesomeIcon icon={faUser} />
-                                    <span>Mi Perfil</span>
+                                    <FontAwesomeIcon icon={faUser} /> Mi Perfil
                                 </Link>
-                                <button onClick={handleLogout} className="logout-btn">
-                                    <FontAwesomeIcon icon={faSignOutAlt} />
-                                    <span>Cerrar Sesión</span>
+                                <button onClick={handleLogout} className="btn-logout-dropdown">
+                                    <FontAwesomeIcon icon={faSignOutAlt} /> Cerrar Sesión
                                 </button>
                             </div>
                         </div>
                     )}
                 </div>
 
-                {/* Botón Menú Móvil */}
+                {/* Botón Menú Móvil - Solo para no admin */}
                 {!isAdmin && (
-                    <button className="mobile-toggle" onClick={toggleMenu} ref={menuBtnRef}>
+                    <button className="mobile-menu-btn" onClick={toggleMenu} ref={menuBtnRef} aria-label="Menú principal">
                         <FontAwesomeIcon icon={isMenuOpen ? faTimes : faBars} />
                     </button>
                 )}
