@@ -20,29 +20,64 @@ export const listarPlanes = async () => {
   }
 };
 
-export const actualizarPlan = async (id, planData) => {
-    const response = await apiClient.put(`/membresias/planes/${id}`, planData);
+export const obtenerPlanPorId = async (id) => {
+  try {
+    const response = await apiClient.get(`/membresias/${id}`);
     return response.data;
+  } catch (error) {
+    console.error('Error al obtener el plan:', error);
+    throw error;
+  }
 };
 
-export const eliminarPlan = async (id) => {
-    await apiClient.delete(`/membresias/planes/${id}`);
+export const actualizarPlan = async (id, planData) => {
+  try {
+    const response = await apiClient.put(`/membresias/actualizar/${id}`, planData);
+    return response.data;
+  } catch (error) {
+    console.error('Error al actualizar el plan:', error);
+    throw error;
+  }
+};
+
+export const eliminarPlan = async (id) => { 
+  try {
+    await apiClient.delete(`/membresias/eliminar/${id}`);
+  } catch (error) {
+    console.error('Error al eliminar plan:', error);
+    throw error;
+  }
 };
 
 
 
 export const suscribirUsuarioAPlan = async (datosSuscripcion) => {
+  try {
     const response = await apiClient.post('/membresias/suscripciones', datosSuscripcion);
     return response.data;
+  } catch (error) {
+    console.error('Error al suscribir usuario:', error);
+    throw error;
+  }
 };
 
 
 export const obtenerMembresiaUsuario = async (usuarioId) => {
+  try {
     const response = await apiClient.get(`/membresias/suscripciones/usuario/${usuarioId}`);
     return response.data;
+  } catch (error) {
+    console.error('Error al obtener membresía del usuario:', error);
+    throw error;
+  }
 };
 
 export const listarSuscripciones = async () => {
+  try {
     const response = await apiClient.get('/membresias/suscripciones');
     return response.data;
+  } catch (error) {
+    console.error('Error al listar suscripciones:', error);
+    return [];
+  }
 };

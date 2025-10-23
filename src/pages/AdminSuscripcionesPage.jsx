@@ -31,7 +31,11 @@ import {
     faFileExport,
     faPhone,
     faCreditCard,
-    faMoneyBillWave
+    faMoneyBillWave,
+    faBell,
+    faDownload,
+    faPrint,
+    faQrcode
 } from '@fortawesome/free-solid-svg-icons';
 import {
     faFacebookF,
@@ -49,8 +53,17 @@ function AdminSuscripcionesPage() {
     const [filtroActivo, setFiltroActivo] = useState('todas');
     const [orden, setOrden] = useState({ campo: 'fechaInicio', direccion: 'desc' });
     const [suscripcionSeleccionada, setSuscripcionSeleccionada] = useState(null);
+    const [estadisticas, setEstadisticas] = useState({
+        total: 0,
+        activas: 0,
+        vencidas: 0,
+        suspendidas: 0,
+        ingresosMensuales: 0,
+        clientesPremium: 0
+    });
+    const [notificaciones, setNotificaciones] = useState([]);
 
-    // Datos de ejemplo como fallback
+    // Datos de ejemplo mejorados
     const suscripcionesEjemplo = [
         {
             id: 1,
@@ -58,12 +71,15 @@ function AdminSuscripcionesPage() {
             usuario: {
                 nombre: 'Juan Pérez',
                 email: 'juan.perez@email.com',
-                telefono: '+51 987 654 321'
+                telefono: '+51 987 654 321',
+                fechaRegistro: '2024-01-15'
             },
             plan: {
+                id: 1,
                 nombrePlan: 'PREMIUM',
                 precio: 149.90,
-                duracion: '1 mes'
+                duracion: 30,
+                descripcion: 'Acceso completo a todas las instalaciones y clases'
             },
             fechaInicio: '2024-11-01',
             fechaFin: '2024-12-01',
@@ -71,9 +87,12 @@ function AdminSuscripcionesPage() {
             proximoPago: '2024-12-01',
             metodoPago: 'Tarjeta Visa',
             ultimoPago: 149.90,
+            frecuenciaPago: 'mensual',
             historialPagos: [
-                { fecha: '2024-11-01', monto: 149.90, estado: 'Completado' }
-            ]
+                { id: 1, fecha: '2024-11-01', monto: 149.90, estado: 'Completado', metodo: 'Visa' },
+                { id: 2, fecha: '2024-10-01', monto: 149.90, estado: 'Completado', metodo: 'Visa' }
+            ],
+            notificaciones: ['Próximo pago en 5 días']
         },
         {
             id: 2,
@@ -81,12 +100,15 @@ function AdminSuscripcionesPage() {
             usuario: {
                 nombre: 'María García',
                 email: 'maria.garcia@email.com',
-                telefono: '+51 987 654 322'
+                telefono: '+51 987 654 322',
+                fechaRegistro: '2024-02-20'
             },
             plan: {
+                id: 2,
                 nombrePlan: 'VIP',
                 precio: 299.90,
-                duracion: '1 mes'
+                duracion: 30,
+                descripcion: 'Acceso VIP con entrenador personal y beneficios exclusivos'
             },
             fechaInicio: '2024-10-15',
             fechaFin: '2024-11-15',
@@ -94,9 +116,11 @@ function AdminSuscripcionesPage() {
             proximoPago: '2024-11-15',
             metodoPago: 'PayPal',
             ultimoPago: 299.90,
+            frecuenciaPago: 'mensual',
             historialPagos: [
-                { fecha: '2024-10-15', monto: 299.90, estado: 'Completado' }
-            ]
+                { id: 3, fecha: '2024-10-15', monto: 299.90, estado: 'Completado', metodo: 'PayPal' }
+            ],
+            notificaciones: ['Suscripción vencida - Contactar al cliente']
         },
         {
             id: 3,
@@ -104,12 +128,15 @@ function AdminSuscripcionesPage() {
             usuario: {
                 nombre: 'Carlos López',
                 email: 'carlos.lopez@email.com',
-                telefono: '+51 987 654 323'
+                telefono: '+51 987 654 323',
+                fechaRegistro: '2024-03-10'
             },
             plan: {
+                id: 3,
                 nombrePlan: 'BÁSICA',
                 precio: 89.90,
-                duracion: '1 mes'
+                duracion: 30,
+                descripcion: 'Acceso básico a instalaciones en horario estándar'
             },
             fechaInicio: '2024-11-10',
             fechaFin: '2024-12-10',
@@ -117,9 +144,11 @@ function AdminSuscripcionesPage() {
             proximoPago: '2024-12-10',
             metodoPago: 'Transferencia',
             ultimoPago: 89.90,
+            frecuenciaPago: 'mensual',
             historialPagos: [
-                { fecha: '2024-11-10', monto: 89.90, estado: 'Completado' }
-            ]
+                { id: 4, fecha: '2024-11-10', monto: 89.90, estado: 'Completado', metodo: 'Transferencia' }
+            ],
+            notificaciones: []
         },
         {
             id: 4,
@@ -127,12 +156,15 @@ function AdminSuscripcionesPage() {
             usuario: {
                 nombre: 'Ana Rodríguez',
                 email: 'ana.rodriguez@email.com',
-                telefono: '+51 987 654 324'
+                telefono: '+51 987 654 324',
+                fechaRegistro: '2024-04-05'
             },
             plan: {
+                id: 1,
                 nombrePlan: 'PREMIUM',
                 precio: 149.90,
-                duracion: '1 mes'
+                duracion: 30,
+                descripcion: 'Acceso completo a todas las instalaciones y clases'
             },
             fechaInicio: '2024-09-01',
             fechaFin: '2024-10-01',
@@ -140,9 +172,11 @@ function AdminSuscripcionesPage() {
             proximoPago: '2024-10-01',
             metodoPago: 'Tarjeta Mastercard',
             ultimoPago: 149.90,
+            frecuenciaPago: 'mensual',
             historialPagos: [
-                { fecha: '2024-09-01', monto: 149.90, estado: 'Completado' }
-            ]
+                { id: 5, fecha: '2024-09-01', monto: 149.90, estado: 'Completado', metodo: 'Mastercard' }
+            ],
+            notificaciones: ['Suscripción suspendida - Pendiente de pago']
         },
         {
             id: 5,
@@ -150,12 +184,15 @@ function AdminSuscripcionesPage() {
             usuario: {
                 nombre: 'Luis Martínez',
                 email: 'luis.martinez@email.com',
-                telefono: '+51 987 654 325'
+                telefono: '+51 987 654 325',
+                fechaRegistro: '2024-05-12'
             },
             plan: {
+                id: 2,
                 nombrePlan: 'VIP',
                 precio: 299.90,
-                duracion: '1 mes'
+                duracion: 30,
+                descripcion: 'Acceso VIP con entrenador personal y beneficios exclusivos'
             },
             fechaInicio: '2024-11-05',
             fechaFin: '2024-12-05',
@@ -163,9 +200,11 @@ function AdminSuscripcionesPage() {
             proximoPago: '2024-12-05',
             metodoPago: 'Tarjeta Visa',
             ultimoPago: 299.90,
+            frecuenciaPago: 'mensual',
             historialPagos: [
-                { fecha: '2024-11-05', monto: 299.90, estado: 'Completado' }
-            ]
+                { id: 6, fecha: '2024-11-05', monto: 299.90, estado: 'Completado', metodo: 'Visa' }
+            ],
+            notificaciones: []
         },
         {
             id: 6,
@@ -173,12 +212,15 @@ function AdminSuscripcionesPage() {
             usuario: {
                 nombre: 'Sofia Hernández',
                 email: 'sofia.hernandez@email.com',
-                telefono: '+51 987 654 326'
+                telefono: '+51 987 654 326',
+                fechaRegistro: '2024-06-18'
             },
             plan: {
+                id: 3,
                 nombrePlan: 'BÁSICA',
                 precio: 89.90,
-                duracion: '1 mes'
+                duracion: 30,
+                descripcion: 'Acceso básico a instalaciones en horario estándar'
             },
             fechaInicio: '2024-10-20',
             fechaFin: '2024-11-20',
@@ -186,9 +228,11 @@ function AdminSuscripcionesPage() {
             proximoPago: '2024-11-20',
             metodoPago: 'PayPal',
             ultimoPago: 89.90,
+            frecuenciaPago: 'mensual',
             historialPagos: [
-                { fecha: '2024-10-20', monto: 89.90, estado: 'Completado' }
-            ]
+                { id: 7, fecha: '2024-10-20', monto: 89.90, estado: 'Completado', metodo: 'PayPal' }
+            ],
+            notificaciones: ['Próximo pago en 2 días']
         }
     ];
 
@@ -198,19 +242,21 @@ function AdminSuscripcionesPage() {
                 setLoading(true);
                 const data = await listarSuscripciones();
                 if (data && data.length > 0) {
-                    // Formatear los datos de la API
                     const suscripcionesFormateadas = data.map(suscripcion => ({
                         id: suscripcion.id,
                         usuarioId: suscripcion.usuarioId,
                         usuario: suscripcion.usuario || {
                             nombre: `Usuario ${suscripcion.usuarioId}`,
                             email: 'email@ejemplo.com',
-                            telefono: '+51 XXX XXX XXX'
+                            telefono: '+51 XXX XXX XXX',
+                            fechaRegistro: new Date().toISOString().split('T')[0]
                         },
                         plan: suscripcion.plan || {
+                            id: 3,
                             nombrePlan: 'BÁSICA',
                             precio: 89.90,
-                            duracion: '1 mes'
+                            duracion: 30,
+                            descripcion: 'Plan básico de membresía'
                         },
                         fechaInicio: suscripcion.fechaInicio || new Date().toISOString().split('T')[0],
                         fechaFin: suscripcion.fechaFin || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
@@ -218,7 +264,9 @@ function AdminSuscripcionesPage() {
                         proximoPago: suscripcion.proximoPago || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
                         metodoPago: suscripcion.metodoPago || 'No especificado',
                         ultimoPago: suscripcion.ultimoPago || 0,
-                        historialPagos: suscripcion.historialPagos || []
+                        frecuenciaPago: suscripcion.frecuenciaPago || 'mensual',
+                        historialPagos: suscripcion.historialPagos || [],
+                        notificaciones: suscripcion.notificaciones || []
                     }));
                     setSuscripciones(suscripcionesFormateadas);
                 } else {
@@ -234,20 +282,39 @@ function AdminSuscripcionesPage() {
         fetchSuscripciones();
     }, []);
 
+    // Calcular estadísticas en tiempo real
+    useEffect(() => {
+        const nuevasEstadisticas = {
+            total: suscripciones.length,
+            activas: suscripciones.filter(s => s.estado === 'ACTIVA').length,
+            vencidas: suscripciones.filter(s => s.estado === 'VENCIDA').length,
+            suspendidas: suscripciones.filter(s => s.estado === 'SUSPENDIDA').length,
+            ingresosMensuales: suscripciones
+                .filter(s => s.estado === 'ACTIVA')
+                .reduce((total, s) => total + (s.ultimoPago || 0), 0),
+            clientesPremium: suscripciones.filter(s =>
+                s.plan.nombrePlan === 'PREMIUM' || s.plan.nombrePlan === 'VIP'
+            ).length
+        };
+        setEstadisticas(nuevasEstadisticas);
+    }, [suscripciones]);
+
     // Filtrar y ordenar suscripciones
     const suscripcionesFiltradas = suscripciones
         .filter(suscripcion => {
-            const coincideBusqueda = 
+            const coincideBusqueda =
                 suscripcion.usuario.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
                 suscripcion.usuario.email.toLowerCase().includes(busqueda.toLowerCase()) ||
-                suscripcion.plan.nombrePlan.toLowerCase().includes(busqueda.toLowerCase());
-            
-            const coincideFiltro = filtroActivo === 'todas' || 
-                                (filtroActivo === 'activas' && suscripcion.estado === 'ACTIVA') ||
-                                (filtroActivo === 'vencidas' && suscripcion.estado === 'VENCIDA') ||
-                                (filtroActivo === 'suspendidas' && suscripcion.estado === 'SUSPENDIDA') ||
-                                (filtroActivo === 'premium' && (suscripcion.plan.nombrePlan === 'PREMIUM' || suscripcion.plan.nombrePlan === 'VIP')) ||
-                                (filtroActivo === 'basica' && suscripcion.plan.nombrePlan === 'BÁSICA');
+                suscripcion.plan.nombrePlan.toLowerCase().includes(busqueda.toLowerCase()) ||
+                suscripcion.usuario.telefono.includes(busqueda);
+
+            const coincideFiltro = filtroActivo === 'todas' ||
+                (filtroActivo === 'activas' && suscripcion.estado === 'ACTIVA') ||
+                (filtroActivo === 'vencidas' && suscripcion.estado === 'VENCIDA') ||
+                (filtroActivo === 'suspendidas' && suscripcion.estado === 'SUSPENDIDA') ||
+                (filtroActivo === 'premium' && (suscripcion.plan.nombrePlan === 'PREMIUM' || suscripcion.plan.nombrePlan === 'VIP')) ||
+                (filtroActivo === 'basica' && suscripcion.plan.nombrePlan === 'BÁSICA') ||
+                (filtroActivo === 'proximas-vencer' && diasParaVencimiento(suscripcion.fechaFin) <= 7 && diasParaVencimiento(suscripcion.fechaFin) > 0);
 
             return coincideBusqueda && coincideFiltro;
         })
@@ -255,22 +322,24 @@ function AdminSuscripcionesPage() {
             const campo = orden.campo;
             let valorA = a[campo];
             let valorB = b[campo];
-            
+
             // Manejar campos anidados
             if (campo.includes('.')) {
                 const [objeto, propiedad] = campo.split('.');
                 valorA = a[objeto]?.[propiedad];
                 valorB = b[objeto]?.[propiedad];
             }
-            
-            // Convertir a string para comparación
-            valorA = valorA?.toString().toLowerCase() || '';
-            valorB = valorB?.toString().toLowerCase() || '';
-            
+
+            // Manejar fechas
+            if (campo.includes('fecha')) {
+                valorA = new Date(valorA).getTime();
+                valorB = new Date(valorB).getTime();
+            }
+
             if (orden.direccion === 'asc') {
-                return valorA.localeCompare(valorB);
+                return valorA < valorB ? -1 : valorA > valorB ? 1 : 0;
             } else {
-                return valorB.localeCompare(valorA);
+                return valorA > valorB ? -1 : valorA < valorB ? 1 : 0;
             }
         });
 
@@ -300,6 +369,13 @@ function AdminSuscripcionesPage() {
             month: 'short',
             day: 'numeric'
         });
+    };
+
+    const formatearMoneda = (monto) => {
+        return new Intl.NumberFormat('es-PE', {
+            style: 'currency',
+            currency: 'PEN'
+        }).format(monto);
     };
 
     const getEstadoColor = (estado) => {
@@ -353,8 +429,48 @@ function AdminSuscripcionesPage() {
     };
 
     const exportarReporte = () => {
-        alert('Generando reporte de suscripciones...');
-        // Aquí iría la lógica para exportar el reporte
+        const fecha = new Date().toISOString().split('T')[0];
+        const nombreArchivo = `reporte-suscripciones-${fecha}.csv`;
+
+        // Crear contenido CSV
+        const headers = ['Usuario', 'Email', 'Plan', 'Estado', 'Fecha Inicio', 'Fecha Fin', 'Último Pago', 'Método Pago'];
+        const filas = suscripcionesFiltradas.map(s => [
+            s.usuario.nombre,
+            s.usuario.email,
+            s.plan.nombrePlan,
+            s.estado,
+            s.fechaInicio,
+            s.fechaFin,
+            s.ultimoPago,
+            s.metodoPago
+        ]);
+
+        const contenidoCSV = [headers, ...filas]
+            .map(fila => fila.map(campo => `"${campo}"`).join(','))
+            .join('\n');
+
+        // Descargar archivo
+        const blob = new Blob([contenidoCSV], { type: 'text/csv' });
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = nombreArchivo;
+        link.click();
+        window.URL.revokeObjectURL(url);
+    };
+
+    const imprimirReporte = () => {
+        window.print();
+    };
+
+    const generarQR = (suscripcion) => {
+        alert(`Generando QR para ${suscripcion.usuario.nombre}...`);
+        // Aquí iría la lógica para generar QR
+    };
+
+    const enviarRecordatorio = (suscripcion) => {
+        alert(`Enviando recordatorio a ${suscripcion.usuario.email}...`);
+        // Aquí iría la lógica para enviar recordatorio
     };
 
     if (loading) {
@@ -367,107 +483,173 @@ function AdminSuscripcionesPage() {
     }
 
     return (
-        <div className="admin-suscripciones-page">
-            {/* Header */}
-            {/* Hero Section */}
+        <div className="admin-suscripciones-page">  
             <section className="hero-suscripciones">
                 <div className="hero-overlay">
                     <div className="hero-content">
                         <h1>GESTIÓN DE SUSCRIPCIONES</h1>
                         <p>Administra y supervisa todas las suscripciones activas de AresFitness</p>
+                        <div className="hero-stats">
+                            <div className="hero-stat">
+                                <FontAwesomeIcon icon={faChartLine} />
+                                <span><strong>{estadisticas.activas}</strong> activas de <strong>{estadisticas.total}</strong> total</span>
+                            </div>
+                            <div className="hero-stat">
+                                <FontAwesomeIcon icon={faMoneyBillWave} />
+                                <span><strong>{formatearMoneda(estadisticas.ingresosMensuales)}</strong> ingresos mensuales</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>
 
-            {/* Estadísticas Rápidas */}
+            {/* Estadísticas Rápidas Mejoradas */}
             <section className="stats-suscripciones">
                 <div className="stats-container">
                     <div className="stat-card">
-                        <FontAwesomeIcon icon={faCheckCircle} className="stat-icon" />
+                        <div className="stat-icon">
+                            <FontAwesomeIcon icon={faCheckCircle} />
+                        </div>
                         <div className="stat-content">
-                            <h3>{suscripciones.filter(s => s.estado === 'ACTIVA').length}</h3>
-                            <p>Suscripciones Activas</p>
+                            <h3>{estadisticas.activas}</h3>
+                            <p>Activas</p>
+                            <span className="stat-trend positivo">+5% este mes</span>
                         </div>
                     </div>
                     <div className="stat-card">
-                        <FontAwesomeIcon icon={faExclamationTriangle} className="stat-icon" />
+                        <div className="stat-icon">
+                            <FontAwesomeIcon icon={faExclamationTriangle} />
+                        </div>
                         <div className="stat-content">
-                            <h3>{suscripciones.filter(s => s.estado === 'VENCIDA').length}</h3>
-                            <p>Suscripciones Vencidas</p>
+                            <h3>{estadisticas.vencidas}</h3>
+                            <p>Vencidas</p>
+                            <span className="stat-trend negativo">-2%</span>
                         </div>
                     </div>
                     <div className="stat-card">
-                        <FontAwesomeIcon icon={faCrown} className="stat-icon" />
+                        <div className="stat-icon">
+                            <FontAwesomeIcon icon={faCrown} />
+                        </div>
                         <div className="stat-content">
-                            <h3>{suscripciones.filter(s => s.plan.nombrePlan === 'PREMIUM' || s.plan.nombrePlan === 'VIP').length}</h3>
-                            <p>Clientes Premium/VIP</p>
+                            <h3>{estadisticas.clientesPremium}</h3>
+                            <p>Premium/VIP</p>
+                            <span className="stat-trend positivo">+12%</span>
                         </div>
                     </div>
                     <div className="stat-card">
-                        <FontAwesomeIcon icon={faReceipt} className="stat-icon" />
+                        <div className="stat-icon">
+                            <FontAwesomeIcon icon={faReceipt} />
+                        </div>
                         <div className="stat-content">
-                            <h3>S/ {suscripciones.reduce((total, s) => total + (s.ultimoPago || 0), 0).toLocaleString()}</h3>
+                            <h3>{formatearMoneda(estadisticas.ingresosMensuales)}</h3>
                             <p>Ingresos Mensuales</p>
+                            <span className="stat-trend positivo">+8%</span>
                         </div>
                     </div>
                 </div>
             </section>
 
-            {/* Barra de Herramientas */}
+            {/* Barra de Herramientas Mejorada */}
             <section className="herramientas-section">
                 <div className="herramientas-container">
-                    <div className="search-bar">
-                        <FontAwesomeIcon icon={faSearch} className="search-icon" />
-                        <input
-                            type="text"
-                            placeholder="Buscar por usuario, email o plan..."
-                            value={busqueda}
-                            onChange={(e) => setBusqueda(e.target.value)}
-                            className="search-input"
-                        />
+                    <div className="search-container">
+                        <div className="search-bar">
+                            <FontAwesomeIcon icon={faSearch} className="search-icon" />
+                            <input
+                                type="text"
+                                placeholder="Buscar por usuario, email, teléfono o plan..."
+                                value={busqueda}
+                                onChange={(e) => setBusqueda(e.target.value)}
+                                className="search-input"
+                            />
+                            {busqueda && (
+                                <button
+                                    className="clear-search"
+                                    onClick={() => setBusqueda('')}
+                                    title="Limpiar búsqueda"
+                                >
+                                    ✕
+                                </button>
+                            )}
+                        </div>
+                        <div className="search-results">
+                            {busqueda && (
+                                <span>{suscripcionesFiltradas.length} suscripciones encontradas</span>
+                            )}
+                        </div>
                     </div>
-                    
+
                     <div className="herramientas-derecha">
                         <div className="filtro-buttons">
                             {[
-                                { id: 'todas', label: 'Todas', icon: faFilter },
-                                { id: 'activas', label: 'Activas', icon: faCheckCircle },
-                                { id: 'vencidas', label: 'Vencidas', icon: faExclamationTriangle },
-                                { id: 'suspendidas', label: 'Suspendidas', icon: faPauseCircle },
-                                { id: 'premium', label: 'Premium/VIP', icon: faCrown },
-                                { id: 'basica', label: 'Básica', icon: faUser }
+                                { id: 'todas', label: 'Todas', icon: faFilter, color: '#7f7676' },
+                                { id: 'activas', label: 'Activas', icon: faCheckCircle, color: '#28a745' },
+                                { id: 'vencidas', label: 'Vencidas', icon: faExclamationTriangle, color: '#dc3545' },
+                                { id: 'suspendidas', label: 'Suspendidas', icon: faPauseCircle, color: '#ffc107' },
+                                { id: 'premium', label: 'Premium/VIP', icon: faCrown, color: '#ffd500' },
+                                { id: 'basica', label: 'Básica', icon: faUser, color: '#7f7676' },
+                                { id: 'proximas-vencer', label: 'Próximas a Vencer', icon: faClock, color: '#ff6b6b' }
                             ].map(filtro => (
                                 <button
                                     key={filtro.id}
                                     className={`filtro-btn ${filtroActivo === filtro.id ? 'active' : ''}`}
                                     onClick={() => setFiltroActivo(filtro.id)}
+                                    style={{ borderColor: filtro.color }}
                                 >
-                                    <FontAwesomeIcon icon={filtro.icon} />
+                                    <FontAwesomeIcon icon={filtro.icon} style={{ color: filtro.color }} />
                                     {filtro.label}
                                 </button>
                             ))}
                         </div>
 
                         <div className="acciones-buttons">
-                            <button className="btn-recargar" onClick={recargarSuscripciones}>
-                                <FontAwesomeIcon icon={faSync} />
-                                Actualizar
+                            <button
+                                className="btn-recargar"
+                                onClick={recargarSuscripciones}
+                                title="Actualizar lista"
+                            >
+                                <FontAwesomeIcon icon={faSync} className={loading ? 'spin' : ''} />
+                                {loading ? 'Actualizando...' : 'Actualizar'}
                             </button>
-                            <button className="btn-exportar" onClick={exportarReporte}>
-                                <FontAwesomeIcon icon={faFileExport} />
-                                Exportar
+                            <button
+                                className="btn-exportar"
+                                onClick={exportarReporte}
+                                title="Exportar reporte CSV"
+                            >
+                                <FontAwesomeIcon icon={faDownload} />
+                                Exportar CSV
+                            </button>
+                            <button
+                                className="btn-imprimir"
+                                onClick={imprimirReporte}
+                                title="Imprimir reporte"
+                            >
+                                <FontAwesomeIcon icon={faPrint} />
+                                Imprimir
                             </button>
                         </div>
                     </div>
                 </div>
             </section>
 
-            {/* Tabla de Suscripciones */}
+            {/* Tabla de Suscripciones Mejorada */}
             <section className="tabla-section">
-                <div className="section-title">
-                    <h2>SUSCRIPCIONES ACTIVAS</h2>
-                    <div className="title-line"></div>
-                    <p>Gestiona todas las suscripciones y estados de membresía</p>
+                <div className="section-header">
+                    <div className="section-title">
+                        <h2>SUSCRIPCIONES ACTIVAS</h2>
+                        <div className="title-line"></div>
+                        <p>Gestiona todas las suscripciones y estados de membresía</p>
+                    </div>
+                    <div className="table-controls">
+                        <span className="table-info">
+                            Mostrando {suscripcionesFiltradas.length} de {suscripciones.length} suscripciones
+                        </span>
+                        {orden.campo && (
+                            <span className="sort-info">
+                                Ordenado por {orden.campo.replace('.', ' ')} ({orden.direccion})
+                            </span>
+                        )}
+                    </div>
                 </div>
 
                 <div className="tabla-container">
@@ -477,24 +659,34 @@ function AdminSuscripcionesPage() {
                                 <thead>
                                     <tr>
                                         <th onClick={() => handleOrdenar('usuario.nombre')}>
-                                            <span>Usuario</span>
-                                            <FontAwesomeIcon icon={getIconoOrden('usuario.nombre')} />
+                                            <span>
+                                                Usuario
+                                                <FontAwesomeIcon icon={getIconoOrden('usuario.nombre')} />
+                                            </span>
                                         </th>
                                         <th onClick={() => handleOrdenar('plan.nombrePlan')}>
-                                            <span>Plan</span>
-                                            <FontAwesomeIcon icon={getIconoOrden('plan.nombrePlan')} />
+                                            <span>
+                                                Plan
+                                                <FontAwesomeIcon icon={getIconoOrden('plan.nombrePlan')} />
+                                            </span>
                                         </th>
                                         <th onClick={() => handleOrdenar('fechaInicio')}>
-                                            <span>Fecha Inicio</span>
-                                            <FontAwesomeIcon icon={getIconoOrden('fechaInicio')} />
+                                            <span>
+                                                Fecha Inicio
+                                                <FontAwesomeIcon icon={getIconoOrden('fechaInicio')} />
+                                            </span>
                                         </th>
                                         <th onClick={() => handleOrdenar('fechaFin')}>
-                                            <span>Fecha Fin</span>
-                                            <FontAwesomeIcon icon={getIconoOrden('fechaFin')} />
+                                            <span>
+                                                Fecha Fin
+                                                <FontAwesomeIcon icon={getIconoOrden('fechaFin')} />
+                                            </span>
                                         </th>
                                         <th onClick={() => handleOrdenar('estado')}>
-                                            <span>Estado</span>
-                                            <FontAwesomeIcon icon={getIconoOrden('estado')} />
+                                            <span>
+                                                Estado
+                                                <FontAwesomeIcon icon={getIconoOrden('estado')} />
+                                            </span>
                                         </th>
                                         <th>Próximo Pago</th>
                                         <th>Acciones</th>
@@ -503,59 +695,78 @@ function AdminSuscripcionesPage() {
                                 <tbody>
                                     {suscripcionesFiltradas.map(suscripcion => {
                                         const diasRestantes = diasParaVencimiento(suscripcion.fechaFin);
+                                        const tieneNotificaciones = suscripcion.notificaciones.length > 0;
+
                                         return (
-                                            <tr key={suscripcion.id} className="fila-suscripcion">
+                                            <tr key={suscripcion.id} className={`fila-suscripcion ${tieneNotificaciones ? 'con-notificacion' : ''}`}>
                                                 <td className="celda-usuario">
                                                     <div className="info-usuario">
                                                         <div className="avatar-mini">
                                                             {suscripcion.usuario.nombre.split(' ').map(n => n[0]).join('')}
                                                         </div>
-                                                        <div>
+                                                        <div className="usuario-info">
                                                             <div className="nombre-completo">
                                                                 {suscripcion.usuario.nombre}
+                                                                {tieneNotificaciones && (
+                                                                    <span className="notificacion-dot" title="Tiene notificaciones"></span>
+                                                                )}
                                                             </div>
                                                             <div className="usuario-email">
                                                                 {suscripcion.usuario.email}
+                                                            </div>
+                                                            <div className="usuario-telefono">
+                                                                {suscripcion.usuario.telefono}
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </td>
                                                 <td className="celda-plan">
-                                                    <span 
-                                                        className="badge-plan"
-                                                        style={{ backgroundColor: getPlanColor(suscripcion.plan.nombrePlan) }}
-                                                    >
-                                                        {suscripcion.plan.nombrePlan}
-                                                    </span>
-                                                    <div className="plan-precio">
-                                                        S/ {suscripcion.plan.precio}
+                                                    <div className="plan-info">
+                                                        <span
+                                                            className="badge-plan"
+                                                            style={{ backgroundColor: getPlanColor(suscripcion.plan.nombrePlan) }}
+                                                        >
+                                                            {suscripcion.plan.nombrePlan}
+                                                        </span>
+                                                        <div className="plan-detalles">
+                                                            <div className="plan-precio">
+                                                                {formatearMoneda(suscripcion.plan.precio)}
+                                                            </div>
+                                                            <div className="plan-duracion">
+                                                                {suscripcion.plan.duracion} días
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </td>
                                                 <td className="celda-fecha">
-                                                    <FontAwesomeIcon icon={faCalendarAlt} />
-                                                    {formatearFecha(suscripcion.fechaInicio)}
+                                                    <div className="fecha-container">
+                                                        <FontAwesomeIcon icon={faCalendarAlt} />
+                                                        <span>{formatearFecha(suscripcion.fechaInicio)}</span>
+                                                    </div>
                                                 </td>
                                                 <td className="celda-fecha">
-                                                    <FontAwesomeIcon icon={faClock} />
-                                                    {formatearFecha(suscripcion.fechaFin)}
-                                                    {diasRestantes <= 7 && diasRestantes > 0 && (
-                                                        <div className="dias-restantes advertencia">
-                                                            {diasRestantes} días
-                                                        </div>
-                                                    )}
-                                                    {diasRestantes <= 0 && (
-                                                        <div className="dias-restantes vencido">
-                                                            Vencida
-                                                        </div>
-                                                    )}
+                                                    <div className="fecha-container">
+                                                        <FontAwesomeIcon icon={faClock} />
+                                                        <span>{formatearFecha(suscripcion.fechaFin)}</span>
+                                                        {diasRestantes <= 7 && diasRestantes > 0 && (
+                                                            <div className="dias-restantes advertencia">
+                                                                {diasRestantes} días
+                                                            </div>
+                                                        )}
+                                                        {diasRestantes <= 0 && (
+                                                            <div className="dias-restantes vencido">
+                                                                Vencida
+                                                            </div>
+                                                        )}
+                                                    </div>
                                                 </td>
                                                 <td className="celda-estado">
                                                     <div className="estado-container">
-                                                        <FontAwesomeIcon 
-                                                            icon={getEstadoIcono(suscripcion.estado)} 
+                                                        <FontAwesomeIcon
+                                                            icon={getEstadoIcono(suscripcion.estado)}
                                                             style={{ color: getEstadoColor(suscripcion.estado) }}
                                                         />
-                                                        <span 
+                                                        <span
                                                             className="badge-estado"
                                                             style={{ backgroundColor: getEstadoColor(suscripcion.estado) }}
                                                         >
@@ -569,36 +780,42 @@ function AdminSuscripcionesPage() {
                                                             {formatearFecha(suscripcion.proximoPago)}
                                                         </div>
                                                         <div className="metodo-pago">
+                                                            <FontAwesomeIcon icon={faCreditCard} />
                                                             {suscripcion.metodoPago}
+                                                        </div>
+                                                        <div className="ultimo-pago">
+                                                            Último: {formatearMoneda(suscripcion.ultimoPago)}
                                                         </div>
                                                     </div>
                                                 </td>
                                                 <td className="celda-acciones">
                                                     <div className="acciones-grid">
-                                                        <button 
+                                                        <button
                                                             className="btn-accion btn-ver"
                                                             onClick={() => abrirModalSuscripcion(suscripcion)}
-                                                            title="Ver detalles"
+                                                            title="Ver detalles completos"
                                                         >
                                                             <FontAwesomeIcon icon={faEye} />
                                                         </button>
-                                                        <button 
-                                                            className="btn-accion btn-editar"
-                                                            title="Editar suscripción"
+                                                        <button
+                                                            className="btn-accion btn-qr"
+                                                            onClick={() => generarQR(suscripcion)}
+                                                            title="Generar QR de acceso"
                                                         >
-                                                            <FontAwesomeIcon icon={faEdit} />
+                                                            <FontAwesomeIcon icon={faQrcode} />
                                                         </button>
-                                                        <button 
+                                                        <button
+                                                            className="btn-accion btn-recordatorio"
+                                                            onClick={() => enviarRecordatorio(suscripcion)}
+                                                            title="Enviar recordatorio"
+                                                        >
+                                                            <FontAwesomeIcon icon={faBell} />
+                                                        </button>
+                                                        <button
                                                             className="btn-accion btn-renovar"
                                                             title="Renovar suscripción"
                                                         >
                                                             <FontAwesomeIcon icon={faSync} />
-                                                        </button>
-                                                        <button 
-                                                            className="btn-accion btn-suspender"
-                                                            title="Suspender suscripción"
-                                                        >
-                                                            <FontAwesomeIcon icon={faPauseCircle} />
                                                         </button>
                                                     </div>
                                                 </td>
@@ -610,123 +827,252 @@ function AdminSuscripcionesPage() {
                         </div>
                     ) : (
                         <div className="no-resultados">
-                            <FontAwesomeIcon icon={faSearch} size="3x" />
+                            <div className="no-result-icon">
+                                <FontAwesomeIcon icon={faSearch} />
+                            </div>
                             <h3>No se encontraron suscripciones</h3>
-                            <p>Intenta con otros términos de búsqueda o selecciona otro filtro</p>
+                            <p>
+                                {busqueda ?
+                                    `No hay suscripciones que coincidan con "${busqueda}"` :
+                                    'No hay suscripciones que coincidan con los filtros seleccionados'
+                                }
+                            </p>
+                            {(busqueda || filtroActivo !== 'todas') && (
+                                <button
+                                    className="btn-limpiar-filtros"
+                                    onClick={() => {
+                                        setBusqueda('');
+                                        setFiltroActivo('todas');
+                                    }}
+                                >
+                                    <FontAwesomeIcon icon={faFilter} />
+                                    Limpiar filtros
+                                </button>
+                            )}
                         </div>
                     )}
                 </div>
 
-                {/* Resumen */}
-                <div className="resumen-tabla">
-                    <p>
-                        Mostrando <strong>{suscripcionesFiltradas.length}</strong> de <strong>{suscripciones.length}</strong> suscripciones
-                        {filtroActivo !== 'todas' && ` (Filtro: ${filtroActivo})`}
-                    </p>
-                </div>
+                {/* Resumen Mejorado */}
+                {suscripcionesFiltradas.length > 0 && (
+                    <div className="tabla-footer">
+                        <div className="resumen-tabla">
+                            <div className="resumen-info">
+                                <span>
+                                    Mostrando <strong>{suscripcionesFiltradas.length}</strong> de <strong>{suscripciones.length}</strong> suscripciones
+                                </span>
+                                {filtroActivo !== 'todas' && (
+                                    <span className="filtro-activo">
+                                        Filtro activo: <strong>{filtroActivo}</strong>
+                                    </span>
+                                )}
+                            </div>
+                            <div className="resumen-acciones">
+                                <button className="btn-exportar-pequeno" onClick={exportarReporte}>
+                                    <FontAwesomeIcon icon={faDownload} />
+                                    Exportar
+                                </button>
+                                <button className="btn-imprimir-pequeno" onClick={imprimirReporte}>
+                                    <FontAwesomeIcon icon={faPrint} />
+                                    Imprimir
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </section>
-
-            {/* Modal de Detalles de Suscripción */}
             {suscripcionSeleccionada && (
                 <div className="modal-overlay" onClick={cerrarModal}>
                     <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-                        <button className="modal-close" onClick={cerrarModal}>×</button>
-                        
                         <div className="modal-header">
-                            <div className="suscripcion-avatar">
-                                {suscripcionSeleccionada.usuario.nombre.split(' ').map(n => n[0]).join('')}
-                            </div>
-                            <div className="suscripcion-info">
-                                <h2>{suscripcionSeleccionada.usuario.nombre}</h2>
-                                <p className="suscripcion-email">{suscripcionSeleccionada.usuario.email}</p>
-                                <div className="badges-container">
-                                    <div 
-                                        className="plan-badge"
-                                        style={{ backgroundColor: getPlanColor(suscripcionSeleccionada.plan.nombrePlan) }}
-                                    >
-                                        {suscripcionSeleccionada.plan.nombrePlan} - S/ {suscripcionSeleccionada.plan.precio}
-                                    </div>
-                                    <div 
-                                        className="estado-badge"
-                                        style={{ backgroundColor: getEstadoColor(suscripcionSeleccionada.estado) }}
-                                    >
-                                        <FontAwesomeIcon icon={getEstadoIcono(suscripcionSeleccionada.estado)} />
-                                        {suscripcionSeleccionada.estado}
-                                    </div>
-                                </div>
-                            </div>
+                            <h2>Detalles de Suscripción</h2>
+                            <button className="btn-cerrar-modal" onClick={cerrarModal}>
+                                ✕
+                            </button>
                         </div>
 
                         <div className="modal-body">
-                            <div className="info-grid">
-                                <div className="info-section">
-                                    <h3>Información de la Suscripción</h3>
-                                    <div className="info-item">
-                                        <FontAwesomeIcon icon={faIdCard} />
-                                        <span>ID: #{suscripcionSeleccionada.id}</span>
+                            {/* Información del Usuario */}
+                            <div className="modal-section">
+                                <h3>
+                                    <FontAwesomeIcon icon={faUser} />
+                                    Información del Usuario
+                                </h3>
+                                <div className="usuario-detalles">
+                                    <div className="detalle-item">
+                                        <label>Nombre completo:</label>
+                                        <span>{suscripcionSeleccionada.usuario.nombre}</span>
                                     </div>
-                                    <div className="info-item">
-                                        <FontAwesomeIcon icon={faCalendarAlt} />
-                                        <span>Inicio: {formatearFecha(suscripcionSeleccionada.fechaInicio)}</span>
+                                    <div className="detalle-item">
+                                        <label>Email:</label>
+                                        <span>{suscripcionSeleccionada.usuario.email}</span>
                                     </div>
-                                    <div className="info-item">
-                                        <FontAwesomeIcon icon={faClock} />
-                                        <span>Vencimiento: {formatearFecha(suscripcionSeleccionada.fechaFin)}</span>
+                                    <div className="detalle-item">
+                                        <label>Teléfono:</label>
+                                        <span>{suscripcionSeleccionada.usuario.telefono}</span>
                                     </div>
-                                    <div className="info-item">
-                                        <FontAwesomeIcon icon={faReceipt} />
-                                        <span>Próximo pago: {formatearFecha(suscripcionSeleccionada.proximoPago)}</span>
-                                    </div>
-                                </div>
-
-                                <div className="info-section">
-                                    <h3>Información de Pago</h3>
-                                    <div className="info-item">
-                                        <FontAwesomeIcon icon={faCreditCard} />
-                                        <span>Método: {suscripcionSeleccionada.metodoPago}</span>
-                                    </div>
-                                    <div className="info-item">
-                                        <FontAwesomeIcon icon={faMoneyBillWave} />
-                                        <span>Último pago: S/ {suscripcionSeleccionada.ultimoPago}</span>
-                                    </div>
-                                    <div className="info-item">
-                                        <FontAwesomeIcon icon={faHistory} />
-                                        <span>Días restantes: {diasParaVencimiento(suscripcionSeleccionada.fechaFin)}</span>
+                                    <div className="detalle-item">
+                                        <label>Fecha de registro:</label>
+                                        <span>{formatearFecha(suscripcionSeleccionada.usuario.fechaRegistro)}</span>
                                     </div>
                                 </div>
                             </div>
 
-                            <div className="historial-section">
-                                <h3>Historial de Pagos</h3>
-                                <div className="historial-list">
-                                    {suscripcionSeleccionada.historialPagos.length > 0 ? (
-                                        suscripcionSeleccionada.historialPagos.map((pago, index) => (
-                                            <div key={index} className="pago-item">
+                            {/* Información del Plan */}
+                            <div className="modal-section">
+                                <h3>
+                                    <FontAwesomeIcon icon={faCrown} />
+                                    Información del Plan
+                                </h3>
+                                <div className="plan-detalles-completos">
+                                    <div className="plan-header">
+                                        <span
+                                            className="badge-plan-grande"
+                                            style={{ backgroundColor: getPlanColor(suscripcionSeleccionada.plan.nombrePlan) }}
+                                        >
+                                            {suscripcionSeleccionada.plan.nombrePlan}
+                                        </span>
+                                        <div className="plan-precio-grande">
+                                            {formatearMoneda(suscripcionSeleccionada.plan.precio)}
+                                        </div>
+                                    </div>
+                                    <div className="detalle-item">
+                                        <label>Descripción:</label>
+                                        <span>{suscripcionSeleccionada.plan.descripcion}</span>
+                                    </div>
+                                    <div className="detalle-item">
+                                        <label>Duración:</label>
+                                        <span>{suscripcionSeleccionada.plan.duracion} días</span>
+                                    </div>
+                                    <div className="detalle-item">
+                                        <label>Frecuencia de pago:</label>
+                                        <span>{suscripcionSeleccionada.frecuenciaPago}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Estado y Fechas */}
+                            <div className="modal-section">
+                                <h3>
+                                    <FontAwesomeIcon icon={faCalendarAlt} />
+                                    Estado y Fechas
+                                </h3>
+                                <div className="estado-detalles">
+                                    <div className="detalle-item">
+                                        <label>Estado:</label>
+                                        <span className="estado-badge" style={{
+                                            backgroundColor: getEstadoColor(suscripcionSeleccionada.estado)
+                                        }}>
+                                            <FontAwesomeIcon icon={getEstadoIcono(suscripcionSeleccionada.estado)} />
+                                            {suscripcionSeleccionada.estado}
+                                        </span>
+                                    </div>
+                                    <div className="detalle-item">
+                                        <label>Fecha de inicio:</label>
+                                        <span>{formatearFecha(suscripcionSeleccionada.fechaInicio)}</span>
+                                    </div>
+                                    <div className="detalle-item">
+                                        <label>Fecha de fin:</label>
+                                        <span>{formatearFecha(suscripcionSeleccionada.fechaFin)}</span>
+                                        {diasParaVencimiento(suscripcionSeleccionada.fechaFin) <= 7 && (
+                                            <span className="dias-advertencia">
+                                                ({diasParaVencimiento(suscripcionSeleccionada.fechaFin)} días restantes)
+                                            </span>
+                                        )}
+                                    </div>
+                                    <div className="detalle-item">
+                                        <label>Próximo pago:</label>
+                                        <span>{formatearFecha(suscripcionSeleccionada.proximoPago)}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Información de Pago */}
+                            <div className="modal-section">
+                                <h3>
+                                    <FontAwesomeIcon icon={faCreditCard} />
+                                    Información de Pago
+                                </h3>
+                                <div className="pago-detalles">
+                                    <div className="detalle-item">
+                                        <label>Método de pago:</label>
+                                        <span>{suscripcionSeleccionada.metodoPago}</span>
+                                    </div>
+                                    <div className="detalle-item">
+                                        <label>Último pago:</label>
+                                        <span>{formatearMoneda(suscripcionSeleccionada.ultimoPago)}</span>
+                                    </div>
+                                    <div className="detalle-item">
+                                        <label>Próximo pago:</label>
+                                        <span>{formatearMoneda(suscripcionSeleccionada.plan.precio)}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Historial de Pagos */}
+                            {suscripcionSeleccionada.historialPagos && suscripcionSeleccionada.historialPagos.length > 0 && (
+                                <div className="modal-section">
+                                    <h3>
+                                        <FontAwesomeIcon icon={faHistory} />
+                                        Historial de Pagos
+                                    </h3>
+                                    <div className="historial-pagos">
+                                        {suscripcionSeleccionada.historialPagos.map((pago, index) => (
+                                            <div key={pago.id || index} className="pago-item">
                                                 <div className="pago-fecha">{formatearFecha(pago.fecha)}</div>
-                                                <div className="pago-monto">S/ {pago.monto}</div>
-                                                <div className={`pago-estado ${pago.estado.toLowerCase()}`}>
+                                                <div className="pago-monto">{formatearMoneda(pago.monto)}</div>
+                                                <div className="pago-estado" style={{ color: pago.estado === 'Completado' ? '#28a745' : '#dc3545' }}>
                                                     {pago.estado}
                                                 </div>
+                                                <div className="pago-metodo">{pago.metodo}</div>
                                             </div>
-                                        ))
-                                    ) : (
-                                        <p className="sin-historial">No hay historial de pagos disponible</p>
-                                    )}
+                                        ))}
+                                    </div>
                                 </div>
-                            </div>
+                            )}
 
-                            <div className="modal-actions">
-                                <button className="btn-primary">
-                                    <FontAwesomeIcon icon={faSync} /> Renovar
+                            {/* Notificaciones */}
+                            {suscripcionSeleccionada.notificaciones && suscripcionSeleccionada.notificaciones.length > 0 && (
+                                <div className="modal-section">
+                                    <h3>
+                                        <FontAwesomeIcon icon={faBell} />
+                                        Notificaciones
+                                    </h3>
+                                    <div className="notificaciones-list">
+                                        {suscripcionSeleccionada.notificaciones.map((notif, index) => (
+                                            <div key={index} className="notificacion-item">
+                                                <FontAwesomeIcon icon={faExclamationTriangle} className="notificacion-icon" />
+                                                <span>{notif}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="modal-footer">
+                            <div className="acciones-modal">
+                                <button
+                                    className="btn-modal btn-secundario"
+                                    onClick={() => enviarRecordatorio(suscripcionSeleccionada)}
+                                >
+                                    <FontAwesomeIcon icon={faEnvelope} />
+                                    Enviar Recordatorio
                                 </button>
-                                <button className="btn-secondary">
-                                    <FontAwesomeIcon icon={faEdit} /> Editar
+                                <button
+                                    className="btn-modal btn-secundario"
+                                    onClick={() => generarQR(suscripcionSeleccionada)}
+                                >
+                                    <FontAwesomeIcon icon={faQrcode} />
+                                    Generar QR
                                 </button>
-                                <button className="btn-warning">
-                                    <FontAwesomeIcon icon={faPauseCircle} /> Suspender
+                                <button className="btn-modal btn-peligro">
+                                    <FontAwesomeIcon icon={faPauseCircle} />
+                                    Suspender
                                 </button>
-                                <button className="btn-danger">
-                                    <FontAwesomeIcon icon={faTrash} /> Cancelar
+                                <button className="btn-modal btn-primario">
+                                    <FontAwesomeIcon icon={faSync} />
+                                    Renovar
                                 </button>
                             </div>
                         </div>
@@ -735,61 +1081,14 @@ function AdminSuscripcionesPage() {
             )}
 
             {/* Footer */}
-            <footer className="main-footer">
-                <div className="footer-container">
+            <footer className="admin-footer">
+                <div className="footer-content">
                     <div className="footer-section">
-                        <div className="logo-footer">
-                            <Link to="/">
-                                <img src="/assets/Imagenes/logo.png" alt="Logo AresFitness" />
-                            </Link>
-                        </div>
-                        <p>Transformando vidas a través del fitness desde 2020</p>
-                        <div className="footer-social">
-                            <a href="#" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
-                                <FontAwesomeIcon icon={faFacebookF} />
-                            </a>
-                            <a href="https://www.instagram.com/aresfitness.peru/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
-                                <FontAwesomeIcon icon={faInstagram} />
-                            </a>
-                            <a href="#" target="_blank" rel="noopener noreferrer" aria-label="TikTok">
-                                <FontAwesomeIcon icon={faTiktok} />
-                            </a>
-                            <a href="#" target="_blank" rel="noopener noreferrer" aria-label="Twitter">
-                                <FontAwesomeIcon icon={faTwitter} />
-                            </a>
-                        </div>
-                    </div>
-
-                    <div className="footer-section">
-                        <h3>Enlaces rápidos</h3>
-                        <ul>
-                            <li><Link to="/admin">Dashboard</Link></li>
-                            <li><Link to="/admin/usuarios">Clientes</Link></li>
-                            <li><Link to="/admin/planes">Planes</Link></li>
-                            <li><Link to="/admin/suscripciones">Suscripciones</Link></li>
-                        </ul>
-                    </div>
-
-                    <div className="footer-section">
-                        <h3>Contáctanos</h3>
-                        <div className="contact-info">
-                            <p><FontAwesomeIcon icon={faMapMarkerAlt} /> Av. Principal 123, Lima, Perú</p>
-                            <p><FontAwesomeIcon icon={faPhone} /> (01) 123-4567</p>
-                            <p><FontAwesomeIcon icon={faEnvelope} /> info@aresfitness.com</p>
-                            <p><FontAwesomeIcon icon={faWhatsapp} /> +51 987 654 321</p>
-                        </div>
-                    </div>
-
-                    <div className="footer-section">
-                        <h3>Horario de atención</h3>
-                        <p>Lunes a Viernes: 5:00 am - 11:00 pm</p>
-                        <p>Sábados: 6:00 am - 10:00 pm</p>
-                        <p>Domingos: 7:00 am - 9:00 pm</p>
+                        <h4>AresFitness</h4>
                     </div>
                 </div>
-
                 <div className="footer-bottom">
-                    <p>&copy; 2025 AresFitness. Gestión de Suscripciones v2.0</p>
+                    <p>&copy; 2024 AresFitness. Todos los derechos reservados.</p>
                 </div>
             </footer>
         </div>

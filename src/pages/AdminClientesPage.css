@@ -6,23 +6,24 @@
 }
 
 .admin-clientes-page {
-    background-color: #000;
+    background-color: #00000000;
     color: #fff;
     font-family: 'Arial', sans-serif;
     line-height: 1.6;
     overflow-x: hidden;
     animation: fadeIn 0.5s ease-out;
+    
 }
 
 /* Hero Section */
-.hero-admin {
+.hero-Clientes-admin {
     height: 40vh;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-top: 80px;
+    margin-top: 10px;
     background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
-                url('/assets/Imagenes/admin-hero.jpg') no-repeat center center/cover;
+                url('https://hips.hearstapps.com/hmg-prod/images/hlh099925applenewschristianbody-016-685984ae11659.jpg?resize=980:*') no-repeat center center/cover;
 }
 
 .hero-overlay {

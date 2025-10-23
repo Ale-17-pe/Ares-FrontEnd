@@ -34,7 +34,9 @@ import {
     faMusic,
     faHeart,
     faBicycle,
-    faStopwatch, faPhone
+    faStopwatch, 
+    faPhone,
+    faTimes // Agregar este icono que falta
 } from '@fortawesome/free-solid-svg-icons';
 import {
     faFacebookF,
@@ -44,6 +46,7 @@ import {
     faWhatsapp
 } from '@fortawesome/free-brands-svg-icons';
 import './AdminClasesPage.css';
+import logo from '../assets/Imagenes/logo.png'; // Agregar import del logo
 
 function AdminClasesPage() {
     const [clases, setClases] = useState([]);
@@ -54,6 +57,17 @@ function AdminClasesPage() {
     const [busqueda, setBusqueda] = useState('');
     const [filtroActivo, setFiltroActivo] = useState('todas');
     const [orden, setOrden] = useState({ campo: 'nombreClase', direccion: 'asc' });
+    const [mostrarDetalles, setMostrarDetalles] = useState(false);
+    const [claseSeleccionada, setClaseSeleccionada] = useState(null);
+    const [paginaActual, setPaginaActual] = useState(1);
+    const [elementosPorPagina] = useState(8);
+    const [estadisticas, setEstadisticas] = useState({
+        totalClases: 0,
+        clasesActivas: 0,
+        totalInscritos: 0,
+        ocupacionPromedio: 0,
+        tiposClase: 0
+    });
 
     // Datos de ejemplo como fallback
     const clasesEjemplo = [
@@ -134,6 +148,32 @@ function AdminClasesPage() {
             horarios: ['Martes 20:00', 'Jueves 20:00'],
             inscritosActuales: 16,
             estado: 'ACTIVA'
+        },
+        {
+            id: 7,
+            nombreClase: 'Functional Training',
+            instructorId: 107,
+            instructor: 'Miguel Ángel',
+            capacidadMaxima: 16,
+            duracion: 50,
+            nivel: 'Intermedio',
+            tipo: 'CrossFit',
+            horarios: ['Lunes 08:00', 'Miércoles 08:00', 'Viernes 08:00'],
+            inscritosActuales: 12,
+            estado: 'ACTIVA'
+        },
+        {
+            id: 8,
+            nombreClase: 'Yoga Avanzado',
+            instructorId: 108,
+            instructor: 'Carmen Ruiz',
+            capacidadMaxima: 18,
+            duracion: 75,
+            nivel: 'Avanzado',
+            tipo: 'Yoga',
+            horarios: ['Martes 19:00', 'Jueves 19:00'],
+            inscritosActuales: 14,
+            estado: 'ACTIVA'
         }
     ];
 
@@ -174,6 +214,19 @@ function AdminClasesPage() {
         cargarClases();
     }, []);
 
+    // Calcular estadísticas en tiempo real
+    useEffect(() => {
+        const nuevasEstadisticas = {
+            totalClases: clases.length,
+            clasesActivas: clases.filter(c => c.estado === 'ACTIVA').length,
+            totalInscritos: clases.reduce((total, clase) => total + clase.inscritosActuales, 0),
+            ocupacionPromedio: clases.length > 0 ?
+                clases.reduce((total, clase) => total + calcularOcupacion(clase.inscritosActuales, clase.capacidadMaxima), 0) / clases.length : 0,
+            tiposClase: new Set(clases.map(c => c.tipo)).size
+        };
+        setEstadisticas(nuevasEstadisticas);
+    }, [clases]);
+
     const handleCrearClick = () => {
         setClaseActual({
             nombreClase: '',
@@ -187,11 +240,13 @@ function AdminClasesPage() {
             estado: 'ACTIVA'
         });
         setFormVisible(true);
+        setError('');
     };
 
     const handleEditarClick = (clase) => {
         setClaseActual({ ...clase });
         setFormVisible(true);
+        setError('');
     };
 
     const handleEliminarClick = async (id) => {
@@ -206,9 +261,45 @@ function AdminClasesPage() {
         }
     };
 
+    const suspenderClase = async (id) => {
+        try {
+            const clase = clases.find(c => c.id === id);
+            await actualizarClase(id, { ...clase, estado: 'SUSPENDIDA' });
+            cargarClases();
+        } catch (err) {
+            setError('Error al suspender la clase');
+        }
+    };
+
+    const activarClase = async (id) => {
+        try {
+            const clase = clases.find(c => c.id === id);
+            await actualizarClase(id, { ...clase, estado: 'ACTIVA' });
+            cargarClases();
+        } catch (err) {
+            setError('Error al activar la clase');
+        }
+    };
+
+    const abrirDetalles = (clase) => {
+        setClaseSeleccionada(clase);
+        setMostrarDetalles(true);
+    };
+
+    const cerrarDetalles = () => {
+        setMostrarDetalles(false);
+        setClaseSeleccionada(null);
+    };
+
     const handleFormChange = (e) => {
         const { name, value } = e.target;
         setClaseActual({ ...claseActual, [name]: value });
+    };
+
+    // Función para manejar horarios
+    const handleHorariosChange = (e) => {
+        const horarios = e.target.value.split(',').map(h => h.trim()).filter(h => h);
+        setClaseActual({ ...claseActual, horarios });
     };
 
     const handleFormSubmit = async (e) => {
@@ -227,6 +318,36 @@ function AdminClasesPage() {
             setError('Error al guardar la clase.');
             console.error(err);
         }
+    };
+
+    // Función para exportar datos
+    const exportarClases = () => {
+        const fecha = new Date().toISOString().split('T')[0];
+        const nombreArchivo = `clases-aresfitness-${fecha}.csv`;
+
+        const headers = ['Nombre', 'Instructor', 'Tipo', 'Nivel', 'Capacidad', 'Inscritos', 'Estado', 'Horarios'];
+        const filas = clasesFiltradas.map(clase => [
+            clase.nombreClase,
+            clase.instructor,
+            clase.tipo,
+            clase.nivel,
+            clase.capacidadMaxima,
+            clase.inscritosActuales,
+            clase.estado,
+            clase.horarios.join('; ')
+        ]);
+
+        const contenidoCSV = [headers, ...filas]
+            .map(fila => fila.map(campo => `"${campo}"`).join(','))
+            .join('\n');
+
+        const blob = new Blob([contenidoCSV], { type: 'text/csv' });
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = nombreArchivo;
+        link.click();
+        window.URL.revokeObjectURL(url);
     };
 
     // Filtrar y ordenar clases
@@ -256,6 +377,18 @@ function AdminClasesPage() {
                 return valorB.toString().localeCompare(valorA.toString());
             }
         });
+
+    // Paginación
+    const indiceUltimoElemento = paginaActual * elementosPorPagina;
+    const indicePrimerElemento = indiceUltimoElemento - elementosPorPagina;
+    const clasesPaginadas = clasesFiltradas.slice(indicePrimerElemento, indiceUltimoElemento);
+    const totalPaginas = Math.ceil(clasesFiltradas.length / elementosPorPagina);
+
+    const cambiarPagina = (numeroPagina) => {
+        setPaginaActual(numeroPagina);
+        // Scroll to top cuando cambia de página
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
 
     const handleOrdenar = (campo) => {
         setOrden(prev => ({
@@ -309,6 +442,23 @@ function AdminClasesPage() {
         await cargarClases();
     };
 
+    // Generar array de páginas para la paginación
+    const generarNumerosPagina = () => {
+        const paginas = [];
+        const paginasAMostrar = 5;
+        let inicio = Math.max(1, paginaActual - Math.floor(paginasAMostrar / 2));
+        let fin = Math.min(totalPaginas, inicio + paginasAMostrar - 1);
+        
+        if (fin - inicio + 1 < paginasAMostrar) {
+            inicio = Math.max(1, fin - paginasAMostrar + 1);
+        }
+        
+        for (let i = inicio; i <= fin; i++) {
+            paginas.push(i);
+        }
+        return paginas;
+    };
+
     if (loading) {
         return (
             <div className="admin-clases-loading">
@@ -335,31 +485,54 @@ function AdminClasesPage() {
             <section className="stats-clases">
                 <div className="stats-container">
                     <div className="stat-card">
-                        <FontAwesomeIcon icon={faChalkboardTeacher} className="stat-icon" />
+                        <div className="stat-icon-container">
+                            <FontAwesomeIcon icon={faChalkboardTeacher} className="stat-icon" />
+                        </div>
                         <div className="stat-content">
-                            <h3>{clases.length}</h3>
+                            <h3>{estadisticas.totalClases}</h3>
                             <p>Total de Clases</p>
+                            <span className="stat-trend">
+                                {clases.length > 0 ? '+5%' : '0%'} este mes
+                            </span>
                         </div>
                     </div>
                     <div className="stat-card">
-                        <FontAwesomeIcon icon={faUsers} className="stat-icon" />
+                        <div className="stat-icon-container">
+                            <FontAwesomeIcon icon={faUsers} className="stat-icon" />
+                        </div>
                         <div className="stat-content">
-                            <h3>{clases.reduce((total, clase) => total + clase.inscritosActuales, 0)}</h3>
+                            <h3>{estadisticas.totalInscritos}</h3>
                             <p>Total Inscritos</p>
+                            <span className="stat-trend positivo">
+                                +{Math.round(estadisticas.totalInscritos / Math.max(estadisticas.totalClases, 1))} por clase
+                            </span>
                         </div>
                     </div>
                     <div className="stat-card">
-                        <FontAwesomeIcon icon={faCheckCircle} className="stat-icon" />
+                        <div className="stat-icon-container">
+                            <FontAwesomeIcon icon={faCheckCircle} className="stat-icon" />
+                        </div>
                         <div className="stat-content">
-                            <h3>{clases.filter(c => c.estado === 'ACTIVA').length}</h3>
+                            <h3>{estadisticas.clasesActivas}</h3>
                             <p>Clases Activas</p>
+                            <span className="stat-trend positivo">
+                                {estadisticas.totalClases > 0 ?
+                                    Math.round((estadisticas.clasesActivas / estadisticas.totalClases) * 100) + '%' : '0%'
+                                }
+                            </span>
                         </div>
                     </div>
                     <div className="stat-card">
-                        <FontAwesomeIcon icon={faDumbbell} className="stat-icon" />
+                        <div className="stat-icon-container">
+                            <FontAwesomeIcon icon={faChartLine} className="stat-icon" />
+                        </div>
                         <div className="stat-content">
-                            <h3>{new Set(clases.map(c => c.tipo)).size}</h3>
-                            <p>Tipos de Clase</p>
+                            <h3>{Math.round(estadisticas.ocupacionPromedio)}%</h3>
+                            <p>Ocupación Promedio</p>
+                            <span className="stat-trend">
+                                {estadisticas.ocupacionPromedio > 80 ? 'Alta' :
+                                    estadisticas.ocupacionPromedio > 60 ? 'Media' : 'Baja'}
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -368,15 +541,31 @@ function AdminClasesPage() {
             {/* Barra de Herramientas */}
             <section className="herramientas-section">
                 <div className="herramientas-container">
-                    <div className="search-bar">
-                        <FontAwesomeIcon icon={faSearch} className="search-icon" />
-                        <input
-                            type="text"
-                            placeholder="Buscar por nombre, instructor o tipo..."
-                            value={busqueda}
-                            onChange={(e) => setBusqueda(e.target.value)}
-                            className="search-input"
-                        />
+                    <div className="search-container">
+                        <div className="search-bar">
+                            <FontAwesomeIcon icon={faSearch} className="search-icon" />
+                            <input
+                                type="text"
+                                placeholder="Buscar por nombre, instructor o tipo..."
+                                value={busqueda}
+                                onChange={(e) => setBusqueda(e.target.value)}
+                                className="search-input"
+                            />
+                            {busqueda && (
+                                <button
+                                    className="clear-search"
+                                    onClick={() => setBusqueda('')}
+                                    title="Limpiar búsqueda"
+                                >
+                                    ✕
+                                </button>
+                            )}
+                        </div>
+                        <div className="search-results">
+                            {busqueda && (
+                                <span>{clasesFiltradas.length} clases encontradas</span>
+                            )}
+                        </div>
                     </div>
 
                     <div className="herramientas-derecha">
@@ -404,6 +593,10 @@ function AdminClasesPage() {
                                 <FontAwesomeIcon icon={faSync} />
                                 Actualizar
                             </button>
+                            <button className="btn-exportar" onClick={exportarClases}>
+                                <FontAwesomeIcon icon={faFileExport} />
+                                Exportar
+                            </button>
                             <button className="btn-nuevo" onClick={handleCrearClick}>
                                 <FontAwesomeIcon icon={faPlus} />
                                 Nueva Clase
@@ -415,162 +608,275 @@ function AdminClasesPage() {
 
             {/* Tabla de Clases */}
             <section className="tabla-section">
-                <div className="section-title">
-                    <h2>LISTA DE CLASES</h2>
-                    <div className="title-line"></div>
-                    <p>Gestiona todas las clases y su disponibilidad</p>
+                <div className="section-header">
+                    <div className="section-title">
+                        <h2>LISTA DE CLASES</h2>
+                        <div className="title-line"></div>
+                        <p>Gestiona todas las clases y su disponibilidad</p>
+                    </div>
+                    <div className="table-controls">
+                        <span className="table-info">
+                            Mostrando {clasesPaginadas.length} de {clasesFiltradas.length} clases
+                        </span>
+                        {orden.campo && (
+                            <span className="sort-info">
+                                Ordenado por {orden.campo} ({orden.direccion})
+                            </span>
+                        )}
+                    </div>
                 </div>
 
                 <div className="tabla-container">
                     {clasesFiltradas.length > 0 ? (
-                        <div className="tabla-responsive">
-                            <table className="tabla-clases">
-                                <thead>
-                                <tr>
-                                    <th onClick={() => handleOrdenar('nombreClase')}>
-                                        <span>Clase</span>
-                                        <FontAwesomeIcon icon={getIconoOrden('nombreClase')} />
-                                    </th>
-                                    <th onClick={() => handleOrdenar('instructor')}>
-                                        <span>Instructor</span>
-                                        <FontAwesomeIcon icon={getIconoOrden('instructor')} />
-                                    </th>
-                                    <th onClick={() => handleOrdenar('tipo')}>
-                                        <span>Tipo</span>
-                                        <FontAwesomeIcon icon={getIconoOrden('tipo')} />
-                                    </th>
-                                    <th onClick={() => handleOrdenar('nivel')}>
-                                        <span>Nivel</span>
-                                        <FontAwesomeIcon icon={getIconoOrden('nivel')} />
-                                    </th>
-                                    <th>Capacidad</th>
-                                    <th>Horarios</th>
-                                    <th>Estado</th>
-                                    <th>Acciones</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                {clasesFiltradas.map(clase => {
-                                    const porcentajeOcupacion = calcularOcupacion(clase.inscritosActuales, clase.capacidadMaxima);
-                                    return (
-                                        <tr key={clase.id} className="fila-clase">
-                                            <td className="celda-clase">
-                                                <div className="info-clase">
-                                                    <FontAwesomeIcon
-                                                        icon={getTipoIcono(clase.tipo)}
-                                                        className="clase-icon"
-                                                    />
-                                                    <div>
-                                                        <div className="nombre-clase">
-                                                            {clase.nombreClase}
-                                                        </div>
-                                                        <div className="clase-duracion">
-                                                            {clase.duracion} min
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td className="celda-instructor">
-                                                <div className="info-instructor">
-                                                    <div className="instructor-nombre">
-                                                        {clase.instructor}
-                                                    </div>
-                                                    <div className="instructor-id">
-                                                        ID: {clase.instructorId}
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td className="celda-tipo">
-                                                    <span className="badge-tipo">
-                                                        {clase.tipo}
-                                                    </span>
-                                            </td>
-                                            <td className="celda-nivel">
-                                                    <span
-                                                        className="badge-nivel"
-                                                        style={{ backgroundColor: getNivelColor(clase.nivel) }}
-                                                    >
-                                                        {clase.nivel}
-                                                    </span>
-                                            </td>
-                                            <td className="celda-capacidad">
-                                                <div className="capacidad-info">
-                                                    <div className="capacidad-texto">
-                                                        {clase.inscritosActuales} / {clase.capacidadMaxima}
-                                                    </div>
-                                                    <div className="capacidad-bar">
-                                                        <div
-                                                            className="capacidad-fill"
-                                                            style={{
-                                                                width: `${porcentajeOcupacion}%`,
-                                                                backgroundColor: porcentajeOcupacion >= 90 ? '#dc3545' :
-                                                                    porcentajeOcupacion >= 70 ? '#ffc107' : '#28a745'
-                                                            }}
-                                                        ></div>
-                                                    </div>
-                                                    <div className="capacidad-porcentaje">
-                                                        {porcentajeOcupacion.toFixed(0)}%
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td className="celda-horarios">
-                                                <div className="horarios-list">
-                                                    {clase.horarios.slice(0, 2).map((horario, index) => (
-                                                        <div key={index} className="horario-item">
-                                                            <FontAwesomeIcon icon={faClock} />
-                                                            {horario}
-                                                        </div>
-                                                    ))}
-                                                    {clase.horarios.length > 2 && (
-                                                        <div className="mas-horarios">
-                                                            +{clase.horarios.length - 2} más
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            </td>
-                                            <td className="celda-estado">
-                                                    <span
-                                                        className="badge-estado"
-                                                        style={{ backgroundColor: getEstadoColor(clase.estado) }}
-                                                    >
-                                                        {clase.estado}
-                                                    </span>
-                                            </td>
-                                            <td className="celda-acciones">
-                                                <div className="acciones-grid">
-                                                    <button
-                                                        className="btn-accion btn-editar"
-                                                        onClick={() => handleEditarClick(clase)}
-                                                        title="Editar clase"
-                                                    >
-                                                        <FontAwesomeIcon icon={faEdit} />
-                                                    </button>
-                                                    <button
-                                                        className="btn-accion btn-eliminar"
-                                                        onClick={() => handleEliminarClick(clase.id)}
-                                                        title="Eliminar clase"
-                                                    >
-                                                        <FontAwesomeIcon icon={faTrash} />
-                                                    </button>
-                                                    <button
-                                                        className="btn-accion btn-detalles"
-                                                        title="Ver detalles"
-                                                    >
-                                                        <FontAwesomeIcon icon={faEye} />
-                                                    </button>
-                                                </div>
-                                            </td>
+                        <>
+                            <div className="tabla-responsive">
+                                <table className="tabla-clases">
+                                    <thead>
+                                        <tr>
+                                            <th onClick={() => handleOrdenar('nombreClase')}>
+                                                <span>
+                                                    Clase
+                                                    <FontAwesomeIcon icon={getIconoOrden('nombreClase')} />
+                                                </span>
+                                            </th>
+                                            <th onClick={() => handleOrdenar('instructor')}>
+                                                <span>
+                                                    Instructor
+                                                    <FontAwesomeIcon icon={getIconoOrden('instructor')} />
+                                                </span>
+                                            </th>
+                                            <th onClick={() => handleOrdenar('tipo')}>
+                                                <span>
+                                                    Tipo
+                                                    <FontAwesomeIcon icon={getIconoOrden('tipo')} />
+                                                </span>
+                                            </th>
+                                            <th onClick={() => handleOrdenar('nivel')}>
+                                                <span>
+                                                    Nivel
+                                                    <FontAwesomeIcon icon={getIconoOrden('nivel')} />
+                                                </span>
+                                            </th>
+                                            <th>Capacidad</th>
+                                            <th>Horarios</th>
+                                            <th>Estado</th>
+                                            <th>Acciones</th>
                                         </tr>
-                                    );
-                                })}
-                                </tbody>
-                            </table>
-                        </div>
+                                    </thead>
+                                    <tbody>
+                                        {clasesPaginadas.map(clase => {
+                                            const porcentajeOcupacion = calcularOcupacion(clase.inscritosActuales, clase.capacidadMaxima);
+                                            return (
+                                                <tr key={clase.id} className="fila-clase">
+                                                    <td className="celda-clase">
+                                                        <div className="info-clase">
+                                                            <FontAwesomeIcon
+                                                                icon={getTipoIcono(clase.tipo)}
+                                                                className="clase-icon"
+                                                            />
+                                                            <div>
+                                                                <div className="nombre-clase">
+                                                                    {clase.nombreClase}
+                                                                </div>
+                                                                <div className="clase-duracion">
+                                                                    {clase.duracion} min
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td className="celda-instructor">
+                                                        <div className="info-instructor">
+                                                            <div className="instructor-nombre">
+                                                                {clase.instructor}
+                                                            </div>
+                                                            <div className="instructor-id">
+                                                                ID: {clase.instructorId}
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td className="celda-tipo">
+                                                        <span className="badge-tipo">
+                                                            {clase.tipo}
+                                                        </span>
+                                                    </td>
+                                                    <td className="celda-nivel">
+                                                        <span
+                                                            className="badge-nivel"
+                                                            style={{ backgroundColor: getNivelColor(clase.nivel) }}
+                                                        >
+                                                            {clase.nivel}
+                                                        </span>
+                                                    </td>
+                                                    <td className="celda-capacidad">
+                                                        <div className="capacidad-info">
+                                                            <div className="capacidad-texto">
+                                                                {clase.inscritosActuales} / {clase.capacidadMaxima}
+                                                            </div>
+                                                            <div className="capacidad-bar">
+                                                                <div
+                                                                    className="capacidad-fill"
+                                                                    style={{
+                                                                        width: `${porcentajeOcupacion}%`,
+                                                                        backgroundColor: porcentajeOcupacion >= 90 ? '#dc3545' :
+                                                                            porcentajeOcupacion >= 70 ? '#ffc107' : '#28a745'
+                                                                    }}
+                                                                ></div>
+                                                            </div>
+                                                            <div className="capacidad-porcentaje">
+                                                                {porcentajeOcupacion.toFixed(0)}%
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td className="celda-horarios">
+                                                        <div className="horarios-list">
+                                                            {clase.horarios.slice(0, 2).map((horario, index) => (
+                                                                <div key={index} className="horario-item">
+                                                                    <FontAwesomeIcon icon={faClock} />
+                                                                    {horario}
+                                                                </div>
+                                                            ))}
+                                                            {clase.horarios.length > 2 && (
+                                                                <div className="mas-horarios">
+                                                                    +{clase.horarios.length - 2} más
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    </td>
+                                                    <td className="celda-estado">
+                                                        <span
+                                                            className="badge-estado"
+                                                            style={{ backgroundColor: getEstadoColor(clase.estado) }}
+                                                        >
+                                                            {clase.estado}
+                                                        </span>
+                                                    </td>
+                                                    <td className="celda-acciones">
+                                                        <div className="acciones-grid">
+                                                            <button
+                                                                className="btn-accion btn-detalles"
+                                                                onClick={() => abrirDetalles(clase)}
+                                                                title="Ver detalles"
+                                                            >
+                                                                <FontAwesomeIcon icon={faEye} />
+                                                            </button>
+                                                            <button
+                                                                className="btn-accion btn-editar"
+                                                                onClick={() => handleEditarClick(clase)}
+                                                                title="Editar clase"
+                                                            >
+                                                                <FontAwesomeIcon icon={faEdit} />
+                                                            </button>
+                                                            {clase.estado === 'ACTIVA' ? (
+                                                                <button
+                                                                    className="btn-accion btn-suspender"
+                                                                    onClick={() => suspenderClase(clase.id)}
+                                                                    title="Suspender clase"
+                                                                >
+                                                                    <FontAwesomeIcon icon={faPauseCircle} />
+                                                                </button>
+                                                            ) : (
+                                                                <button
+                                                                    className="btn-accion btn-activar"
+                                                                    onClick={() => activarClase(clase.id)}
+                                                                    title="Activar clase"
+                                                                >
+                                                                    <FontAwesomeIcon icon={faCheckCircle} />
+                                                                </button>
+                                                            )}
+                                                            <button
+                                                                className="btn-accion btn-eliminar"
+                                                                onClick={() => handleEliminarClick(clase.id)}
+                                                                title="Eliminar clase"
+                                                            >
+                                                                <FontAwesomeIcon icon={faTrash} />
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            );
+                                        })}
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            {/* Paginación */}
+                            {totalPaginas > 1 && (
+                                <div className="paginacion">
+                                    <div className="paginacion-info">
+                                        Página {paginaActual} de {totalPaginas} - {clasesFiltradas.length} clases
+                                    </div>
+                                    <div className="paginacion-controles">
+                                        <button
+                                            onClick={() => cambiarPagina(1)}
+                                            disabled={paginaActual === 1}
+                                            className="btn-paginacion"
+                                            title="Primera página"
+                                        >
+                                            «
+                                        </button>
+                                        <button
+                                            onClick={() => cambiarPagina(paginaActual - 1)}
+                                            disabled={paginaActual === 1}
+                                            className="btn-paginacion"
+                                            title="Página anterior"
+                                        >
+                                            ‹
+                                        </button>
+                                        
+                                        {generarNumerosPagina().map(numero => (
+                                            <button
+                                                key={numero}
+                                                onClick={() => cambiarPagina(numero)}
+                                                className={`btn-paginacion ${paginaActual === numero ? 'active' : ''}`}
+                                            >
+                                                {numero}
+                                            </button>
+                                        ))}
+                                        
+                                        <button
+                                            onClick={() => cambiarPagina(paginaActual + 1)}
+                                            disabled={paginaActual === totalPaginas}
+                                            className="btn-paginacion"
+                                            title="Página siguiente"
+                                        >
+                                            ›
+                                        </button>
+                                        <button
+                                            onClick={() => cambiarPagina(totalPaginas)}
+                                            disabled={paginaActual === totalPaginas}
+                                            className="btn-paginacion"
+                                            title="Última página"
+                                        >
+                                            »
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
+                        </>
                     ) : (
                         <div className="no-resultados">
-                            <FontAwesomeIcon icon={faSearch} size="3x" />
+                            <div className="no-result-icon">
+                                <FontAwesomeIcon icon={faSearch} />
+                            </div>
                             <h3>No se encontraron clases</h3>
-                            <p>Intenta con otros términos de búsqueda o selecciona otro filtro</p>
+                            <p>
+                                {busqueda ?
+                                    `No hay clases que coincidan con "${busqueda}"` :
+                                    'No hay clases que coincidan con los filtros seleccionados'
+                                }
+                            </p>
+                            {(busqueda || filtroActivo !== 'todas') && (
+                                <button
+                                    className="btn-limpiar-filtros"
+                                    onClick={() => {
+                                        setBusqueda('');
+                                        setFiltroActivo('todas');
+                                    }}
+                                >
+                                    <FontAwesomeIcon icon={faFilter} />
+                                    Limpiar filtros
+                                </button>
+                            )}
                             <button className="btn-nuevo" onClick={handleCrearClick}>
                                 <FontAwesomeIcon icon={faPlus} />
                                 Crear Primera Clase
@@ -578,28 +884,17 @@ function AdminClasesPage() {
                         </div>
                     )}
                 </div>
-
-                {/* Resumen */}
-                <div className="resumen-tabla">
-                    <p>
-                        Mostrando <strong>{clasesFiltradas.length}</strong> de <strong>{clases.length}</strong> clases
-                        {filtroActivo !== 'todas' && ` (Filtro: ${filtroActivo})`}
-                    </p>
-                </div>
             </section>
 
             {/* Modal de Formulario */}
             {isFormVisible && (
-                <div className="modal-overlay">
-                    <div className="modal-content">
-                        <button className="modal-close" onClick={() => setFormVisible(false)}>×</button>
-
+                <div className="modal-overlay" onClick={() => setFormVisible(false)}>
+                    <div className="modal-content" onClick={(e) => e.stopPropagation()}>
                         <div className="modal-header">
-                            <FontAwesomeIcon icon={faChalkboardTeacher} className="modal-icon" />
-                            <div className="modal-title">
-                                <h2>{claseActual.id ? 'Editar Clase' : 'Crear Nueva Clase'}</h2>
-                                <p>{claseActual.id ? 'Modifica los detalles de la clase' : 'Completa la información para crear una nueva clase'}</p>
-                            </div>
+                            <h2>{claseActual.id ? 'Editar Clase' : 'Crear Nueva Clase'}</h2>
+                            <button className="btn-cerrar-modal" onClick={() => setFormVisible(false)}>
+                                ✕
+                            </button>
                         </div>
 
                         <div className="modal-body">
@@ -705,6 +1000,17 @@ function AdminClasesPage() {
                                             <option value="SUSPENDIDA">Suspendida</option>
                                         </select>
                                     </div>
+
+                                    <div className="form-group full-width">
+                                        <label>Horarios (separados por coma)</label>
+                                        <input
+                                            name="horarios"
+                                            value={claseActual.horarios.join(', ')}
+                                            onChange={handleHorariosChange}
+                                            placeholder="Ej: Lunes 07:00, Miércoles 07:00, Viernes 07:00"
+                                        />
+                                        <small>Separa cada horario con una coma</small>
+                                    </div>
                                 </div>
 
                                 <div className="modal-actions">
@@ -726,61 +1032,129 @@ function AdminClasesPage() {
                 </div>
             )}
 
+            {/* Modal de Detalles */}
+            {mostrarDetalles && claseSeleccionada && (
+                <div className="modal-overlay" onClick={cerrarDetalles}>
+                    <div className="modal-content modal-detalles" onClick={(e) => e.stopPropagation()}>
+                        <div className="modal-header">
+                            <div className="modal-title">
+                                <FontAwesomeIcon 
+                                    icon={getTipoIcono(claseSeleccionada.tipo)} 
+                                    className="modal-icon" 
+                                />
+                                <div>
+                                    <h2>{claseSeleccionada.nombreClase}</h2>
+                                    <p>Detalles completos de la clase</p>
+                                </div>
+                            </div>
+                            <div className="modal-header-actions">
+                                <span 
+                                    className="badge-estado"
+                                    style={{ backgroundColor: getEstadoColor(claseSeleccionada.estado) }}
+                                >
+                                    {claseSeleccionada.estado}
+                                </span>
+                                <button className="btn-cerrar-modal" onClick={cerrarDetalles}>
+                                    ✕
+                                </button>
+                            </div>
+                        </div>
+
+                        <div className="modal-body">
+                            <div className="detalles-grid">
+                                <div className="detalle-seccion">
+                                    <h3>Información General</h3>
+                                    <div className="detalle-item">
+                                        <label>Instructor:</label>
+                                        <span>{claseSeleccionada.instructor} (ID: {claseSeleccionada.instructorId})</span>
+                                    </div>
+                                    <div className="detalle-item">
+                                        <label>Tipo:</label>
+                                        <span className="badge-tipo">{claseSeleccionada.tipo}</span>
+                                    </div>
+                                    <div className="detalle-item">
+                                        <label>Nivel:</label>
+                                        <span 
+                                            className="badge-nivel"
+                                            style={{ backgroundColor: getNivelColor(claseSeleccionada.nivel) }}
+                                        >
+                                            {claseSeleccionada.nivel}
+                                        </span>
+                                    </div>
+                                    <div className="detalle-item">
+                                        <label>Duración:</label>
+                                        <span>{claseSeleccionada.duracion} minutos</span>
+                                    </div>
+                                </div>
+
+                                <div className="detalle-seccion">
+                                    <h3>Capacidad e Inscripciones</h3>
+                                    <div className="detalle-item">
+                                        <label>Capacidad Máxima:</label>
+                                        <span>{claseSeleccionada.capacidadMaxima} personas</span>
+                                    </div>
+                                    <div className="detalle-item">
+                                        <label>Inscritos Actuales:</label>
+                                        <span>{claseSeleccionada.inscritosActuales} personas</span>
+                                    </div>
+                                    <div className="detalle-item">
+                                        <label>Disponibilidad:</label>
+                                        <span>{claseSeleccionada.capacidadMaxima - claseSeleccionada.inscritosActuales} cupos libres</span>
+                                    </div>
+                                    <div className="detalle-item">
+                                        <label>Ocupación:</label>
+                                        <span>{calcularOcupacion(claseSeleccionada.inscritosActuales, claseSeleccionada.capacidadMaxima).toFixed(1)}%</span>
+                                    </div>
+                                </div>
+
+                                <div className="detalle-seccion full-width">
+                                    <h3>Horarios</h3>
+                                    <div className="horarios-detalle">
+                                        {claseSeleccionada.horarios.map((horario, index) => (
+                                            <div key={index} className="horario-detalle-item">
+                                                <FontAwesomeIcon icon={faClock} />
+                                                <span>{horario}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="modal-actions">
+                                <button 
+                                    className="btn-primary"
+                                    onClick={() => {
+                                        cerrarDetalles();
+                                        handleEditarClick(claseSeleccionada);
+                                    }}
+                                >
+                                    <FontAwesomeIcon icon={faEdit} />
+                                    Editar Clase
+                                </button>
+                                <button 
+                                    className="btn-secondary"
+                                    onClick={cerrarDetalles}
+                                >
+                                    Cerrar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             {/* Footer */}
             <footer className="main-footer">
                 <div className="footer-container">
                     <div className="footer-section">
                         <div className="logo-footer">
                             <Link to="/">
-                                <img src="/assets/Imagenes/logo.png" alt="Logo AresFitness" />
+                                <img src={logo} alt="Logo AresFitness" />
                             </Link>
                         </div>
                         <p>Transformando vidas a través del fitness desde 2020</p>
-                        <div className="footer-social">
-                            <a href="#" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
-                                <FontAwesomeIcon icon={faFacebookF} />
-                            </a>
-                            <a href="https://www.instagram.com/aresfitness.peru/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
-                                <FontAwesomeIcon icon={faInstagram} />
-                            </a>
-                            <a href="#" target="_blank" rel="noopener noreferrer" aria-label="TikTok">
-                                <FontAwesomeIcon icon={faTiktok} />
-                            </a>
-                            <a href="#" target="_blank" rel="noopener noreferrer" aria-label="Twitter">
-                                <FontAwesomeIcon icon={faTwitter} />
-                            </a>
-                        </div>
-                    </div>
-
-                    <div className="footer-section">
-                        <h3>Enlaces rápidos</h3>
-                        <ul>
-                            <li><Link to="/admin">Dashboard</Link></li>
-                            <li><Link to="/admin/usuarios">Clientes</Link></li>
-                            <li><Link to="/admin/planes">Planes</Link></li>
-                            <li><Link to="/admin/suscripciones">Suscripciones</Link></li>
-                            <li><Link to="/admin/clases">Clases</Link></li>
-                        </ul>
-                    </div>
-
-                    <div className="footer-section">
-                        <h3>Contáctanos</h3>
-                        <div className="contact-info">
-                            <p><FontAwesomeIcon icon={faMapMarkerAlt} /> Av. Principal 123, Lima, Perú</p>
-                            <p><FontAwesomeIcon icon={faPhone} /> (01) 123-4567</p>
-                            <p><FontAwesomeIcon icon={faEnvelope} /> info@aresfitness.com</p>
-                            <p><FontAwesomeIcon icon={faWhatsapp} /> +51 987 654 321</p>
-                        </div>
-                    </div>
-
-                    <div className="footer-section">
-                        <h3>Horario de atención</h3>
-                        <p>Lunes a Viernes: 5:00 am - 11:00 pm</p>
-                        <p>Sábados: 6:00 am - 10:00 pm</p>
-                        <p>Domingos: 7:00 am - 9:00 pm</p>
                     </div>
                 </div>
-
                 <div className="footer-bottom">
                     <p>&copy; 2025 AresFitness. Gestión de Clases v2.0</p>
                 </div>

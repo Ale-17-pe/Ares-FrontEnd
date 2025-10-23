@@ -1,6 +1,6 @@
 // src/components/Header.jsx
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import logo from "../assets/Imagenes/logo.png";
 import { useAuth } from '../context/AuthContext';
@@ -16,6 +16,8 @@ import './Header.css';
 
 function Header() {
     const { usuario, logout } = useAuth();
+    const navigate = useNavigate(); 
+
     const {
         isMenuOpen, toggleMenu, closeMenu,
         isDropdownOpen, toggleDropdown, closeDropdown,
@@ -28,9 +30,10 @@ function Header() {
         logout();
         closeDropdown();
         closeMenu();
-    };
+        navigate('/'); 
+    }
 
-    const isAdmin = usuario && (usuario.rol === 'admin' || usuario.rol === 'recepcionista');
+    const isAdmin = usuario && (usuario.role === 'ADMIN' || usuario.role === 'RECEPCIONISTA');
 
     return (
         <header className="main-header">
@@ -158,7 +161,6 @@ function Header() {
                     )}
                 </div>
 
-                {/* Botón Menú Móvil - Solo para no admin */}
                 {!isAdmin && (
                     <button className="mobile-menu-btn" onClick={toggleMenu} ref={menuBtnRef} aria-label="Menú principal">
                         <FontAwesomeIcon icon={isMenuOpen ? faTimes : faBars} />

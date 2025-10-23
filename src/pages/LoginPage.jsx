@@ -30,6 +30,7 @@ function LoginPage() {
       localStorage.setItem('usuario', JSON.stringify(result.usuario));
       alert(`Bienvenido, ${result.usuario.nombre}`);
       setUsuario({ email: '', password: '' });
+      
       if (result.usuario.role === 'ADMIN') {
         navigate('/admin');
       } else {
@@ -48,9 +49,14 @@ function LoginPage() {
     setShowPassword(!showPassword);
   };
 
-  return (
+ return (
     <div className="login-page">
+      {/* Logo Section */}
+      <div className="logo-container">
+        <img src={logo} alt="AresFitness Logo" />
+      </div>
 
+      {/* Main Content */}
       <div className="main-wrapper">
         <div className="container">
           <div className="form-content">
@@ -58,7 +64,7 @@ function LoginPage() {
               <img src={icono} alt="Icono de usuario" />
             </div>
 
-            <h1 id="title">INICIAR SESIÓN</h1>
+            <h1 className="title">INICIAR SESIÓN</h1>
             <p className="subtitle">Introduce tus credenciales para acceder</p>
 
             {error && (
@@ -70,50 +76,53 @@ function LoginPage() {
             <form onSubmit={handleSubmit} autoComplete="off">
               <div className="input-group">
                 <div className="input-field">
-                  <FontAwesomeIcon icon={faEnvelope} />
+                  <FontAwesomeIcon icon={faEnvelope} className="input-icon" />
                   <input
                     type="email"
                     name="email"
-                    placeholder="   Correo electrónico"
+                    placeholder="Correo electrónico"
                     value={usuario.email}
                     onChange={handleChange}
-                    title="Ingrese tu correo "
+                    title="Ingrese tu correo"
                     required
                   />
                 </div>
 
-                {/* Campo Contraseña */}
                 <div className="input-field">
-                  <FontAwesomeIcon icon={faLock} />
+                  <FontAwesomeIcon icon={faLock} className="input-icon" />
                   <input
                     type={showPassword ? "text" : "password"}
                     name="password"
-                    placeholder="     Contraseña"
+                    placeholder="Contraseña"
                     value={usuario.password}
                     onChange={handleChange}
                     minLength="6"
                     required
                   />
-                  <span
+                  <button
+                    type="button"
                     className="toggle-password"
                     onClick={togglePasswordVisibility}
+                    aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
                   >
                     <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
-                  </span>
+                  </button>
                 </div>
 
-                <div className="OLVIDE">
-                  <Link to="/olvide">¿Olvidaste tu contraseña?</Link>
-                </div>
-
-                <div className="remember-me">
-                  <input
-                    type="checkbox"
-                    id="remember-me"
-                    checked={rememberMe}
-                    onChange={(e) => setRememberMe(e.target.checked)}
-                  />
-                  <label htmlFor="remember-me">Mantener mi sesión iniciada</label>
+                <div className="form-options">
+                  <div className="remember-me">
+                    <input
+                      type="checkbox"
+                      id="remember-me"
+                      checked={rememberMe}
+                      onChange={(e) => setRememberMe(e.target.checked)}
+                    />
+                    <label htmlFor="remember-me">Mantener sesión</label>
+                  </div>
+                  
+                  <div className="forgot-password">
+                    <Link to="/olvide">¿Olvidaste contraseña?</Link>
+                  </div>
                 </div>
               </div>
 
@@ -122,11 +131,11 @@ function LoginPage() {
                 className="btn-login"
                 disabled={loading}
               >
-                {loading ? 'Ingresando...' : 'Ingresar'}
+                {loading ? 'Ingresando...' : 'INGRESAR'}
               </button>
             </form>
 
-            <div className="Registrar">
+            <div className="register-link">
               <span>¿No tienes cuenta?</span>
               <Link to="/registro">REGÍSTRATE</Link>
             </div>
@@ -134,6 +143,7 @@ function LoginPage() {
         </div>
       </div>
 
+      {/* Footer */}
       <footer>
         <p>&copy; 2025 AresFitness. Todos los derechos reservados.</p>
       </footer>

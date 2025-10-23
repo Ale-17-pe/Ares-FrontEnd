@@ -1,5 +1,6 @@
 // App.jsx
 import { Routes, Route } from "react-router-dom";
+import { AuthProvider } from "./context/AuthContext";
 import Layout from "./components/Layout";           
 import AdminLayout from "./components/AdminLayout";  
 import AdminRoute from "./components/AdminRoute";
@@ -21,6 +22,7 @@ import MisReservasPage from './pages/MisReservasPage';
 
 function App() {
   return (
+    <AuthProvider>
     <Routes>
      
       <Route path="/" element={<Layout />}>
@@ -46,6 +48,7 @@ function App() {
         </Route>
       </Route>
     </Routes>
+    </AuthProvider>
   );
 }
 

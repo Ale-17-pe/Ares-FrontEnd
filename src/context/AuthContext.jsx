@@ -5,15 +5,18 @@ import { useNavigate } from 'react-router-dom';
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
-
     const [usuario, setUsuario] = useState(null);
     const [token, setToken] = useState(localStorage.getItem('jwtToken') || null);
-
     const navigate = useNavigate();
+
     useEffect(() => {
         const usuarioGuardado = localStorage.getItem('usuario');
-        if (usuarioGuardado) {
+        const tokenGuardado = localStorage.getItem('jwtToken');
+        
+        if (usuarioGuardado && tokenGuardado) {
             setUsuario(JSON.parse(usuarioGuardado));
+            setToken(tokenGuardado);
+            apiClient.defaults.headers.common['Authorization'] = `Bearer ${tokenGuardado}`;
         }
     }, []);
 
@@ -29,16 +32,24 @@ export function AuthProvider({ children }) {
             setToken(token);
             setUsuario(datosUsuario);
 
-            navigate('/dashboard');
+            // Redirigir según el rol
+            if (datosUsuario.role === 'ADMIN') {
+                navigate('/admin');
+            } else {
+                navigate('/dashboard');
+            }
+            
             return { success: true };
         } catch (error) {
             console.error("Error en el login:", error.response?.data || error.message);
-            return { success: false, error: error.response?.data?.message || "Error al iniciar sesión" };
+            return { 
+                success: false, 
+                error: error.response?.data?.error || "Error al iniciar sesión" 
+            };
         }
     };
 
     const logout = () => {
-        console.log("Cerrando sesión desde el contexto...");
         localStorage.removeItem('jwtToken');
         localStorage.removeItem('usuario');
         delete apiClient.defaults.headers.common['Authorization'];
@@ -56,7 +67,6 @@ export function AuthProvider({ children }) {
     );
 }
 
-// 3. Creamos un "Hook" personalizado para usar el contexto fácilmente
 export function useAuth() {
     return useContext(AuthContext);
-}
+}   

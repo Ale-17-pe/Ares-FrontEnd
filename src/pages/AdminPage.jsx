@@ -1,44 +1,53 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import logo from "../assets/Imagenes/logo.png";
 
 import {
-    faCrown,
-    faUser,
-    faSignInAlt,
-    faUserPlus,
-    faDumbbell,
-    faChartLine,
-    faCog,
-    faShieldAlt,
-    faCalendarAlt,
-    faMoneyBillWave,
-    faChartBar,
-    faCogs,
-    faTachometerAlt,
-    faIdCard,
-    faReceipt,
-    faUserCog,
-    faClipboardList,
-    faUsers,
-    faMapMarkerAlt,
-    faPhone,
-    faEnvelope
+    faCrown, faUser, faSignInAlt, faUserPlus, faDumbbell, faChartLine,
+    faCog, faShieldAlt, faCalendarAlt, faMoneyBillWave, faChartBar,
+    faCogs, faTachometerAlt, faIdCard, faReceipt, faUserCog,
+    faClipboardList, faUsers, faMapMarkerAlt, faPhone, faEnvelope,
+    faArrowRight, faBell
 } from '@fortawesome/free-solid-svg-icons';
 import {
-    faFacebookF,
-    faInstagram,
-    faTwitter,
-    faTiktok,
-    faWhatsapp
+    faFacebookF, faInstagram, faTwitter, faTiktok, faWhatsapp
 } from '@fortawesome/free-brands-svg-icons';
 import './AdminPage.css';
 
 function AdminPage() {
+    const [notificaciones, setNotificaciones] = useState(3);
+    const [busquedaModulo, setBusquedaModulo] = useState('');
+    const [loading, setLoading] = useState(true);
+
+    // CORREGIDO: Variables con nombres correctos
+    const [datosEnTiempoReal, setDatosEnTiempoReal] = useState({
+        clientesActivos: 0,
+        ingresosMensuales: 0,
+        nuevosRegistros: 0, // CORREGIDO: Cambiar nuevisRegistros
+        tasaRetencion: 0    // CORREGIDO: Cambiar tasaMensuales
+    });
+
+    useEffect(() => {
+        const cargarDatos = async () => {
+            setLoading(true);
+
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            setDatosEnTiempoReal({
+                clientesActivos: 1247,
+                ingresosMensuales: 45820,
+                nuevosRegistros: 324,
+                tasaRetencion: 89
+            });
+            setLoading(false);
+        };
+        cargarDatos();
+    }, []);
+
     const metricas = [
         {
             icono: faUsers,
-            numero: '1,247',
+            numero: loading ? '...' : datosEnTiempoReal.clientesActivos.toLocaleString(),
             titulo: 'Clientes Activos',
             cambio: '+12%',
             tendencia: 'positiva',
@@ -46,7 +55,7 @@ function AdminPage() {
         },
         {
             icono: faMoneyBillWave,
-            numero: 'S/ 45,820',
+            numero: loading ? '...' : `S/ ${datosEnTiempoReal.ingresosMensuales.toLocaleString()}`,
             titulo: 'Ingresos Mensuales',
             cambio: '+8%',
             tendencia: 'positiva',
@@ -54,15 +63,15 @@ function AdminPage() {
         },
         {
             icono: faDumbbell,
-            numero: '89%',
+            numero: loading ? '...' : `${datosEnTiempoReal.tasaRetencion}%`,
             titulo: 'Tasa de Retención',
             cambio: '+3%',
             tendencia: 'positiva',
             color: '#17a2b8'
         },
-        {   
+        {
             icono: faChartLine,
-            numero: '324',
+            numero: loading ? '...' : datosEnTiempoReal.nuevosRegistros.toLocaleString(),
             titulo: 'Nuevos Registros',
             cambio: '+15%',
             tendencia: 'positiva',
@@ -137,6 +146,11 @@ function AdminPage() {
         }
     ];
 
+    const modulosFiltrados = modulosAdmin.filter(modulo =>
+        modulo.titulo.toLowerCase().includes(busquedaModulo.toLowerCase()) ||
+        modulo.descripcion.toLowerCase().includes(busquedaModulo.toLowerCase())
+    );
+
     const actividadesRecientes = [
         {
             usuario: 'María García',
@@ -164,8 +178,33 @@ function AdminPage() {
         }
     ];
 
+    const handleQuickAction = (accion) => {
+        console.log(`Acción rápida: ${accion}`);
+    };
+
     return (
         <div className="admin-page">
+
+            <section className="hero-Admin-panel">
+                <div className="hero-overlay">
+                    <div className="hero-content">
+                        <h1>Panel de Administración</h1>
+                        <p>Gestiona tu gimnasio de manera eficiente</p>
+                        <div className="admin-breadcrumb">
+                            <FontAwesomeIcon icon={faTachometerAlt} />
+                            <span>Dashboard Principal</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* Loading State */}
+            {loading && (
+                <div className="loading-Admin-dashboard">
+                    <div className="loading-spinner"></div>
+                    <p>Cargando datos del dashboard...</p>
+                </div>
+            )}
 
             {/* Métricas Rápidas */}
             <section className="metricas-section">
@@ -195,8 +234,26 @@ function AdminPage() {
                     <p>Accede a todas las herramientas de gestión de tu gimnasio</p>
                 </div>
 
+                {/* AGREGADO: Contenedor para buscador y notificaciones */}
+                <div className="modulos-header">
+                    <div className="search-modulos">
+                        <input
+                            type="text"
+                            placeholder="Buscar módulo..."
+                            value={busquedaModulo}
+                            onChange={(e) => setBusquedaModulo(e.target.value)}
+                            className="search-modulos-input"
+                        />
+                    </div>
+                    <div className="admin-notifications">
+                        <FontAwesomeIcon icon={faBell} />
+                        {notificaciones > 0 && <span className="notification-badge">{notificaciones}</span>}
+                    </div>
+                </div>
+
                 <div className="modulos-grid">
-                    {modulosAdmin.map((modulo, index) => (
+                    {/* CORREGIDO: Usar modulosFiltrados en lugar de modulosAdmin */}
+                    {modulosFiltrados.map((modulo, index) => (
                         <Link key={index} to={modulo.ruta} className="modulo-card">
                             <div className="modulo-header">
                                 <div
@@ -292,9 +349,11 @@ function AdminPage() {
                     <div className="title-line"></div>
                 </div>
                 <div className="quick-actions-grid">
-                    <button className="quick-action-btn">
+                    <button className="quick-action-btn"
+                        onClick={() => handleQuickAction('nuevo-cliente')}>
                         <FontAwesomeIcon icon={faUserPlus} />
                         <span>Nuevo Cliente</span>
+                        <FontAwesomeIcon icon={faArrowRight} className="action-arrow" />
                     </button>
                     <button className="quick-action-btn">
                         <FontAwesomeIcon icon={faMoneyBillWave} />
@@ -312,60 +371,18 @@ function AdminPage() {
             </section>
 
             {/* Footer */}
-            <footer className="main-footer">
-                <div className="footer-container">
-                    <div className="footer-section">
-                        <div className="logo-footer">
+            <footer className="main-footer-Admin">
+                <div className="footer-container-Admin">
+                    <div className="footer-section-Admin">
+                        <div className="logo-footer-Admin">
                             <Link to="/">
-                                <img src="/assets/Imagenes/logo.png" alt="Logo AresFitness" />
+                                <img src={logo} alt="Logo AresFitness" />
                             </Link>
                         </div>
                         <p>Transformando vidas a través del fitness desde 2020</p>
-                        <div className="footer-social">
-                            <a href="#" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
-                                <FontAwesomeIcon icon={faFacebookF} />
-                            </a>
-                            <a href="https://www.instagram.com/aresfitness.peru/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
-                                <FontAwesomeIcon icon={faInstagram} />
-                            </a>
-                            <a href="#" target="_blank" rel="noopener noreferrer" aria-label="TikTok">
-                                <FontAwesomeIcon icon={faTiktok} />
-                            </a>
-                            <a href="#" target="_blank" rel="noopener noreferrer" aria-label="Twitter">
-                                <FontAwesomeIcon icon={faTwitter} />
-                            </a>
-                        </div>
-                    </div>
-
-                    <div className="footer-section">
-                        <h3>Enlaces rápidos</h3>
-                        <ul>
-                            <li><Link to="/">Inicio</Link></li>
-                            <li><Link to="/membresias">Planes</Link></li>
-                            <li><Link to="/ubicacion">Ubicación</Link></li>
-                            <li><Link to="/ejercicios">Ejercicios</Link></li>
-                        </ul>
-                    </div>
-
-                    <div className="footer-section">
-                        <h3>Contáctanos</h3>
-                        <div className="contact-info">
-                            <p><FontAwesomeIcon icon={faMapMarkerAlt} /> Av. Principal 123, Lima, Perú</p>
-                            <p><FontAwesomeIcon icon={faPhone} /> (01) 123-4567</p>
-                            <p><FontAwesomeIcon icon={faEnvelope} /> info@aresfitness.com</p>
-                            <p><FontAwesomeIcon icon={faWhatsapp} /> +51 987 654 321</p>
-                        </div>
-                    </div>
-
-                    <div className="footer-section">
-                        <h3>Horario de atención</h3>
-                        <p>Lunes a Viernes: 5:00 am - 11:00 pm</p>
-                        <p>Sábados: 6:00 am - 10:00 pm</p>
-                        <p>Domingos: 7:00 am - 9:00 pm</p>
                     </div>
                 </div>
-
-                <div className="footer-bottom">
+                <div className="footer-bottom-Admin">
                     <p>&copy; 2025 AresFitness. Panel de Administración v2.0</p>
                 </div>
             </footer>

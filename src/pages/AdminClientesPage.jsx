@@ -67,7 +67,7 @@ function AdminClientesPage() {
     return (
         <div className="admin-clientes-page">
             {/* Hero Section */}
-            <section className="hero-admin">
+            <section className="hero-Clientes-admin">
                 <div className="hero-overlay">
                     <div className="hero-content">
                         <h1>Administración de Clientes</h1>

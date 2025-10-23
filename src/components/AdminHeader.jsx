@@ -1,67 +1,84 @@
-// src/components/AdminHeader.jsx
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom'; // 1. Importar useNavigate
+import { Link, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faShieldAlt, faTachometerAlt, faSignOutAlt, faChartLine, faDumbbell } from '@fortawesome/free-solid-svg-icons';
+import { 
+  faShieldAlt, 
+  faTachometerAlt, 
+  faSignOutAlt, 
+  faDumbbell,
+  faChevronDown  // Agregar este icono
+} from '@fortawesome/free-solid-svg-icons';
 import { useAuth } from '../context/AuthContext';
-import { useHomeEffects } from '../hooks/useHomeEffects'; // Asumo que este es el nombre correcto de tu hook
-
-import './AdminHeader.css'; // Un archivo de estilos separado
+import { useHomeEffects } from '../hooks/useHomeEffects';
+import logo from "../assets/Imagenes/logo.png";
+import './AdminHeader.css';
 
 function AdminHeader() {
-    const { logout } = useAuth();
-    const navigate = useNavigate(); // Hook para redirigir
+  const { logout, usuario } = useAuth(); // Agregar usuario del contexto
+  const navigate = useNavigate();
 
-    // Obtienes toda la lógica del menú desde tu hook personalizado
-    const {
-        isDropdownOpen,
-        toggleDropdown,
-        closeDropdown,
-        userMenuBtnRef,
-        authDropdownRef
-    } = useHomeEffects();
+  const {
+    isDropdownOpen,
+    toggleDropdown,
+    closeDropdown,
+    userMenuBtnRef,
+    authDropdownRef
+  } = useHomeEffects();
 
-    // 2. Crear la función de logout
-    const handleLogout = () => {
-        logout();
-        closeDropdown(); // Cierra el menú
-        navigate('/login'); // Redirige al login
-    };
+  const handleLogout = () => {
+    logout();
+    closeDropdown();
+    navigate('/login');
+  };
 
-    return (
-        <header className="main-header">
-            <div className="header-container">
-                <div className="logo-container">
-                    {/* 3. El logo ahora lleva al dashboard de admin */}
-                    <Link to="/admin">
-                        <img src={logo} alt="Logo AresFitness" />
-                    </Link>
-                </div>
-                <div className="header-actions">
-                    <button className="user-btn admin-badge" onClick={toggleDropdown} ref={userMenuBtnRef}>
-                        <FontAwesomeIcon icon={faShieldAlt} /> Panel Admin
-                    </button>
+  return (
+    <header className="admin-header">
+      <div className="admin-header-container">
+        <div className="logo-container">
+          <Link to="/admin">
+            <img src={logo} alt="Logo AresFitness" />
+          </Link>
+        </div>
+        
+        <div className="admin-header-actions">
+          <div className="user-menu">
+            <button 
+              className="admin-user-btn" 
+              onClick={toggleDropdown} 
+              ref={userMenuBtnRef}
+            >
+              <FontAwesomeIcon icon={faShieldAlt} /> 
+              <span>
+                {usuario ? `Hola, ${usuario.nombre}` : 'Panel Admin'}
+              </span>
+              <FontAwesomeIcon 
+                icon={faChevronDown} 
+                className={`dropdown-arrow ${isDropdownOpen ? 'rotate' : ''}`} 
+              />
+            </button>
 
-                    {/* 4. Aplicar la clase dinámica y la referencia */}
-                    <div 
-                        className={`auth-dropdown ${isDropdownOpen ? 'show' : ''}`}
-                        ref={authDropdownRef}
-                    >
-                        <Link to="/admin" onClick={closeDropdown}>
-                            <FontAwesomeIcon icon={faTachometerAlt} />Panel
-                        </Link>
-                        <Link to="/" onClick={closeDropdown}>
-                            <FontAwesomeIcon icon={faDumbbell} /> Ir al Sitio
-                        </Link>
-                        {/* 5. Añadir el botón de Cerrar Sesión */}
-                        <button onClick={handleLogout} className="btn-logout-dropdown">
-                            <FontAwesomeIcon icon={faSignOutAlt} /> Cerrar Sesión
-                        </button>
-                    </div>
-                </div>
+            <div 
+              className={`admin-auth-dropdown ${isDropdownOpen ? 'show' : ''}`}
+              ref={authDropdownRef}
+            >
+              <Link to="/admin" onClick={closeDropdown}>
+                <FontAwesomeIcon icon={faTachometerAlt} /> 
+                Panel de Control
+              </Link>
+              <Link to="/" onClick={closeDropdown}>
+                <FontAwesomeIcon icon={faDumbbell} /> 
+                Ir al Sitio Principal
+              </Link>
+              <button onClick={handleLogout} className="admin-logout-btn">
+                <FontAwesomeIcon icon={faSignOutAlt} /> 
+                Cerrar Sesión
+              </button>
             </div>
-        </header>
-    );
+          </div>
+        </div>
+      </div>
+    </header>
+  );
 }
 
 export default AdminHeader;
