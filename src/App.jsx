@@ -9,9 +9,9 @@ import LoginPage from "./pages/LoginPage";
 import Dashboard from "./pages/DashboardPage.jsx";
 import RegistroPage from "./pages/RegistroPage.jsx";
 import UbicacionPage from "./pages/UbicacionPage.jsx";
-import Membresias from "./pages/MisMembresiasPage.jsx";
 import EjerciciosPage from "./pages/EjerciciosPage.jsx";
 import PlanesPage from "./pages/PlanesPage.jsx";
+import NosotrosPage from "./pages/NosotrosPage.jsx";
 import AdminPage from './pages/AdminPage';
 import AdminPlanesPage from './pages/AdminPlanesPage';
 import AdminClientesPage from './pages/AdminClientesPage';
@@ -43,6 +43,7 @@ function App() {
           <Route path="ubicacion" element={<UbicacionPage />} />
           <Route path="planes" element={<PlanesPage />} />
           <Route path="ejercicios" element={<EjerciciosPage />} />
+          <Route path="nosotros" element={<NosotrosPage />} />
           <Route path="/membresias" element={<MisMembresiasPage />} />
           <Route path="/clases" element={<ClasesPage />} />
           <Route path="/reservas" element={<MisReservasPage />} />

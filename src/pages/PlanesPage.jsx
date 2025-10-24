@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { listarPlanes } from "../services/membresiaService";
 import { Link, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import libro from '../assets/Imagenes/LibroR.png';
 import logo from "../assets/Imagenes/logo.png";
 
 import {
@@ -34,20 +33,19 @@ import "./css/PlanesPage.css";
 function PlanesPage() {
     const [planes, setPlanes] = useState([]);
     const [loading, setLoading] = useState(true);
-
     const [mensaje, setMensaje] = useState('');
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
-    // Planes predefinidos como fallback
+    // Planes predefinidos como fallback - CORREGIDOS
     const planesPredefinidos = [
         {
             id: 1,
-            nombre: "BÁSICA",
+            nombrePlan: "BÁSICA",
             precio: 89.90,
-            duracion: "1 mes",
+            duracionEnDias: 30,
             descripcion: "Perfecta para empezar tu journey fitness",
-            caracteristicas: [
+            caracteristicas: [ // Array explícito de características
                 "Acceso a zona de musculación",
                 "Acceso a cardio",
                 "Lockers disponibles",
@@ -61,11 +59,11 @@ function PlanesPage() {
         },
         {
             id: 2,
-            nombre: "PREMIUM",
+            nombrePlan: "PREMIUM",
             precio: 149.90,
-            duracion: "1 mes",
+            duracionEnDias: 30,
             descripcion: "La opción más popular para resultados óptimos",
-            caracteristicas: [
+            caracteristicas: [ // Array explícito de características
                 "Todo lo de Básica +",
                 "Acceso ilimitado a clases grupales",
                 "Área VIP incluida",
@@ -80,11 +78,11 @@ function PlanesPage() {
         },
         {
             id: 3,
-            nombre: "VIP",
+            nombrePlan: "VIP",
             precio: 299.90,
-            duracion: "1 mes",
+            duracionEnDias: 30,
             descripcion: "Experiencia fitness completa y personalizada",
-            caracteristicas: [
+            caracteristicas: [ // Array explícito de características
                 "Todo lo de Premium +",
                 "Entrenador personal (4 sesiones/mes)",
                 "Plan nutricional avanzado",
@@ -108,15 +106,14 @@ function PlanesPage() {
                 if (data && data.length > 0) {
                     const planesConEstilo = data.map((plan, index) => ({
                         ...plan,
-                        popular: index === 1,
+                        popular: index === 1, // Hacer el segundo plan popular
                         icono: [faDumbbell, faFire, faDiamond][index] || faCrown,
                         color: ["#7f7676", "#ffd500", "#ff6b6b"][index] || "#ffd500",
                         caracteristicas: plan.caracteristicas || [
                             "Acceso a todas las áreas",
                             "Asesoría personalizada",
                             "Horario extendido"
-                        ],
-                        duracion: plan.duracion || "1 mes"
+                        ]
                     }));
                     setPlanes(planesConEstilo);
                 } else {
@@ -124,7 +121,8 @@ function PlanesPage() {
                 }
             } catch (error) {
                 console.error("Error al cargar las membresías:", error);
-                setError("No se pudieron cargar los planes. Inténtalo más tarde."); setPlanes(planesPredefinidos);
+                setError("No se pudieron cargar los planes. Mostrando planes de demostración.");
+                setPlanes(planesPredefinidos);
             } finally {
                 setLoading(false);
             }
@@ -132,35 +130,29 @@ function PlanesPage() {
         fetchPlanes();
     }, []);
 
-    const handleSuscribirse = async (planId) => {
+    const handleSuscribirse = (planId) => {
         setMensaje('');
         setError('');
 
-        // Obtenemos el ID del usuario que ha iniciado sesión
+        // Verificar si el usuario está logueado
         const usuarioLogueado = localStorage.getItem('usuario');
         if (!usuarioLogueado) {
-            setError("Debes iniciar sesión para poder suscribirte.");
-            // Opcional: redirigir al login
-            setTimeout(() => navigate('/login'), 3000);
+            setError("Debes iniciar sesión para poder suscribirte. Redirigiendo al login...");
+            setTimeout(() => navigate('/login'), 2000);
             return;
         }
-        const usuario = JSON.parse(usuarioLogueado);
 
         try {
-            // Preparamos el objeto que espera el backend
-            const datosSuscripcion = {
-                usuarioId: usuario.id,
-                planId: planId,
-            };
+            const usuario = JSON.parse(usuarioLogueado);
+            setMensaje(`¡Perfecto! Estás suscribiéndote al plan. Serás redirigido al dashboard.`);
 
-            await suscribirUsuarioAPlan(datosSuscripcion);
+            // Aquí iría la lógica real de suscripción
+            // await suscribirUsuarioAPlan({ usuarioId: usuario.id, planId });
 
-            setMensaje("¡Suscripción exitosa! Serás redirigido a tu dashboard en 3 segundos.");
             setTimeout(() => navigate('/dashboard'), 3000);
-
         } catch (err) {
-            console.error("Error al suscribirse:", err);
-            setError("Ocurrió un error al procesar tu suscripción. Es posible que ya tengas un plan activo.");
+            console.error("Error al procesar suscripción:", err);
+            setError("Ocurrió un error al procesar tu suscripción.");
         }
     };
 
@@ -185,8 +177,17 @@ function PlanesPage() {
                 </div>
             </section>
 
-            {error && <p className="mensaje-error">{error}</p>}
-            {mensaje && <p className="mensaje-exito">{mensaje}</p>}
+            {/* Mensajes de estado */}
+            {error && (
+                <div className="mensaje-error">
+                    <span>⚠️</span> {error}
+                </div>
+            )}
+            {mensaje && (
+                <div className="mensaje-exito">
+                    <span>✅</span> {mensaje}
+                </div>
+            )}
 
             {/* Planes Section */}
             <section className="planes-section">
@@ -217,29 +218,61 @@ function PlanesPage() {
                                             style={{ color: plan.color || '#ffd500' }}
                                         />
                                     </div>
-                                    <h3>{plan.nombre}</h3>
-                                    <p className="plan-descripcion">{plan.descripcion}</p>
+                                    <div className="plan-title-section">
+                                        <h3>{plan.nombrePlan || plan.nombre}</h3>
+                                        <p className="plan-descripcion">{plan.descripcion}</p>
+                                    </div>
                                 </div>
 
                                 <div className="plan-precio">
-                                    <span className="precio">S/ {plan.precio.toFixed(2)}</span>
-                                    <span className="duracion">/{plan.duracionEnDias} días</span>
+                                    <span className="precio">S/ {plan.precio?.toFixed(2)}</span>
+                                    <span className="duracion">/{plan.duracionEnDias || 30} días</span>
                                 </div>
 
                                 <ul className="caracteristicas-list">
-                                    {(plan.descripcion ? plan.descripcion.split('.  ') : []).map((caracteristica, index) => (
-                                        caracteristica && <li key={index}>
-                                            <FontAwesomeIcon icon={faCheck} className="check-icon" />
-                                            {caracteristica}
-                                        </li>
-                                    ))}
+                                    {(plan.caracteristicas || []).length > 0 ? (
+                                        // Si hay características definidas, usarlas
+                                        plan.caracteristicas.map((caracteristica, index) => (
+                                            <li key={index}>
+                                                <FontAwesomeIcon icon={faCheck} className="check-icon" />
+                                                <span className="caracteristica-text">
+                                                    {caracteristica}
+                                                </span>
+                                            </li>
+                                        ))
+                                    ) : plan.descripcion ? (
+                                        // Si no hay características, dividir la descripción
+                                        plan.descripcion.split(/[.,]/).filter(item => item.trim().length > 5).map((item, index) => (
+                                            <li key={index}>
+                                                <FontAwesomeIcon icon={faCheck} className="check-icon" />
+                                                <span className="caracteristica-text">
+                                                    {item.trim()}
+                                                </span>
+                                            </li>
+                                        )).slice(0, 4) // Limitar a 4 características máximo
+                                    ) : (
+                                        // Características por defecto si no hay nada
+                                        [
+                                            "Acceso a todas las áreas",
+                                            "Asesoría personalizada",
+                                            "Horario extendido",
+                                            "Equipos de última generación"
+                                        ].map((caracteristica, index) => (
+                                            <li key={index}>
+                                                <FontAwesomeIcon icon={faCheck} className="check-icon" />
+                                                <span className="caracteristica-text">
+                                                    {caracteristica}
+                                                </span>
+                                            </li>
+                                        ))
+                                    )}
                                 </ul>
 
                                 <button
                                     className={`btn-suscribirse ${plan.popular ? 'btn-popular' : ''}`}
                                     onClick={() => handleSuscribirse(plan.id)}
                                 >
-                                    SUSCRIBIRME
+                                    {plan.popular ? '🔥 SUSCRIBIRME' : 'SUSCRIBIRME'}
                                 </button>
                             </div>
                         ))
@@ -338,8 +371,6 @@ function PlanesPage() {
                             <li><Link to="/ejercicios">Ejercicios</Link></li>
                         </ul>
                     </div>
-
-
 
                     <div className="footer-section">
                         <h3>Horario de atención</h3>

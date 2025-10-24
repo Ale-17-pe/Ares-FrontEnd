@@ -1095,3 +1095,122 @@ goals-section {
         display: none;
     }
 }
+
+/* ESTILOS PARA EL EFECTO DE CONTEO ANIMADO */
+.stats-container {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 30px;
+    padding: 60px 20px;
+    background: linear-gradient(135deg, #0c0c0c 0%, #1a1a1a 100%);
+    position: relative;
+    overflow: hidden;
+    border-radius: 15px;
+    margin-top: 40px;
+}
+
+/* Efecto de partículas de fondo */
+.stats-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        radial-gradient(circle at 20% 80%, rgba(255, 215, 0, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255, 107, 0, 0.08) 0%, transparent 50%);
+    animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+}
+
+.stat-item {
+    text-align: center;
+    position: relative;
+    z-index: 1;
+    flex: 1;
+    min-width: 200px;
+    padding: 30px 20px;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    border: 1px solid rgba(255, 215, 0, 0.2);
+    transition: all 0.3s ease;
+}
+
+.stat-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(255, 215, 0, 0.2);
+    border-color: rgba(255, 215, 0, 0.4);
+}
+
+.stat-item h3 {
+    font-size: 3.5rem;
+    font-weight: 800;
+    background: linear-gradient(45deg, #ffd500, #ff6b00);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin: 0 0 10px 0;
+    font-family: 'Arial Black', sans-serif;
+    text-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+    transition: all 0.3s ease;
+}
+
+.stat-item p {
+    color: #fff;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Efecto de pulso durante el conteo */
+.stat-item.animating h3 {
+    animation: pulse 0.5s ease-in-out;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+/* Responsive para stats */
+@media (max-width: 768px) {
+    .stats-container {
+        flex-direction: column;
+        gap: 20px;
+        padding: 40px 20px;
+    }
+    
+    .stat-item {
+        min-width: 250px;
+        padding: 25px 15px;
+    }
+    
+    .stat-item h3 {
+        font-size: 2.8rem;
+    }
+    
+    .stat-item p {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .stat-item h3 {
+        font-size: 2.2rem;
+    }
+    
+    .stat-item p {
+        font-size: 0.9rem;
+    }
+}

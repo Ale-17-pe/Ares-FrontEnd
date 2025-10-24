@@ -667,7 +667,7 @@
 
 @media (max-width: 480px) {
     .admin-planes-page {
-        padding-top: 60px; /* Ajustar para móviles pequeños */
+        padding-top: 60px; 
     }
     
     .stats-container {

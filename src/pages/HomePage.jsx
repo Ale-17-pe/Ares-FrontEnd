@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./css/HomePage.css"; 
 import logo from "../assets/Imagenes/logo.png";
 import cuerda from "../assets/Imagenes/Cuerda.jpg";
@@ -15,24 +15,61 @@ import {
 import { 
     faFacebookF, faInstagram, faTwitter, faTiktok, faWhatsapp 
 } from '@fortawesome/free-brands-svg-icons';
-import { useHomeEffects } from '../hooks/useHomeEffects';
 
 function HomePage() {
-    const { 
-        isMenuOpen, 
-        isDropdownOpen, 
-        userMenuBtnRef, 
-        authDropdownRef, 
-        toggleMenu, 
-        closeMenu, 
-        closeDropdown 
-    } = useHomeEffects();
+    const statsRef = useRef(null);
+    const [countersVisible, setCountersVisible] = useState(false);
+
+    // Efecto para detectar cuando las estadísticas son visibles
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (entry.isIntersecting) {
+                    setCountersVisible(true);
+                }
+            },
+            { threshold: 0.3 }
+        );
+
+        if (statsRef.current) {
+            observer.observe(statsRef.current);
+        }
+
+        return () => {
+            if (statsRef.current) {
+                observer.unobserve(statsRef.current);
+            }
+        };
+    }, []);
+
+    // Componente Counter simple
+    const Counter = ({ target, duration = 2000 }) => {
+        const [count, setCount] = useState(0);
+        
+        useEffect(() => {
+            if (!countersVisible) return;
+            
+            let start = 0;
+            const increment = target / (duration / 16);
+            
+            const timer = setInterval(() => {
+                start += increment;
+                if (start >= target) {
+                    setCount(target);
+                    clearInterval(timer);
+                } else {
+                    setCount(Math.floor(start));
+                }
+            }, 16);
+            
+            return () => clearInterval(timer);
+        }, [countersVisible, target, duration]);
+        
+        return count;
+    };
 
     return (
         <>
-
-
-            {/* Resto del componente... */}
             <section
                 className="hero"
                 style={{
@@ -51,7 +88,6 @@ function HomePage() {
                 </div>
             </section>
 
-
             {/* QUIÉNES SOMOS */}
             <section className="about-section">
                 <div className="section-title">
@@ -61,7 +97,8 @@ function HomePage() {
 
                 <div className="about-container">
                     <div className="about-content">
-                        <p>En <strong>AresFitness</strong>, somos más que un gimnasio: somos una comunidad apasionada por transformar vidas...</p>
+                        <p>En <strong>AresFitness</strong>, somos más que un gimnasio: 
+                        somos una comunidad apasionada por transformar vidas...</p>
 
                         <div className="about-features">
                             <div className="feature">
@@ -81,18 +118,33 @@ function HomePage() {
                             </div>
                         </div>
 
-                        {/* Estadísticas */}
-                        <div className="stats-container">
+                        {/* Estadísticas con efecto de conteo */}
+                        <div className="stats-container" ref={statsRef}>
                             <div className="stat-item">
-                                <h3 data-count="5000">0</h3>
+                                <h3>
+                                    {countersVisible ? 
+                                        <Counter target={5000} duration={2000} /> : 
+                                        "0"
+                                    }
+                                </h3>
                                 <p>Clientes Satisfechos</p>
                             </div>
                             <div className="stat-item">
-                                <h3 data-count="5">0</h3>
+                                <h3>
+                                    {countersVisible ? 
+                                        <Counter target={5} duration={1500} /> : 
+                                        "0"
+                                    }
+                                </h3>
                                 <p>Años de Experiencia</p>
                             </div>
                             <div className="stat-item">
-                                <h3 data-count="50">0</h3>
+                                <h3>
+                                    {countersVisible ? 
+                                        <Counter target={50} duration={1800} /> : 
+                                        "0"
+                                    }
+                                </h3>
                                 <p>Entrenadores Certificados</p>
                             </div>
                         </div>
@@ -140,6 +192,7 @@ function HomePage() {
                     ></iframe>
                 </div>
             </section>
+
             {/* CTA */}
             <section
                 className="cta-section"

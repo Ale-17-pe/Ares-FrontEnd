@@ -121,7 +121,7 @@ function UbicacionPage() {
                                 </div>
                                 <div className="info-content">
                                     <h3>Dirección</h3>
-                                    <p>Av. Principal 123, Lima, Perú</p>
+                                    <p>ARES FITNESS, Entrada de Huascata, Chaclacayo 15472</p>
                                 </div>
                             </div>
 
@@ -159,7 +159,7 @@ function UbicacionPage() {
 
                             <div className="action-buttons">
                                 <a 
-                                    href="https://maps.google.com/?q=Av. Principal 123, Lima, Perú" 
+                                    href="https://maps.app.goo.gl/jWqao1vUVbAip5KW9"
                                     target="_blank" 
                                     rel="noopener noreferrer"
                                     className="btn-direction"
@@ -167,7 +167,7 @@ function UbicacionPage() {
                                     <FontAwesomeIcon icon={faDirections} /> CÓMO LLEGAR
                                 </a>
                                 <a 
-                                    href="https://api.whatsapp.com/send?phone=51923606983" 
+                                    href="https://api.whatsapp.com/send?phone=51987076253" 
                                     target="_blank" 
                                     rel="noopener noreferrer"
                                     className="btn-whatsapp"
