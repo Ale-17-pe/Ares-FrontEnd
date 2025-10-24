@@ -45,6 +45,7 @@ function AdminUsuariosPage() {
 
     // Estado para nuevo usuario
     const [nuevoUsuario, setNuevoUsuario] = useState({
+        dni: '',
         nombre: '',
         apellido: '',
         email: '',
@@ -164,7 +165,7 @@ function AdminUsuariosPage() {
                 usuario.apellido.toLowerCase().includes(busqueda.toLowerCase()) ||
                 usuario.email.toLowerCase().includes(busqueda.toLowerCase());
 
-            const coincideFiltro = 
+            const coincideFiltro =
                 filtroActivo === 'todos' ||
                 (filtroActivo === 'activos' && usuario.estado === 'Activo') ||
                 (filtroActivo === 'inactivos' && usuario.estado === 'Inactivo') ||
@@ -285,19 +286,19 @@ function AdminUsuariosPage() {
                 fechaRegistro: new Date().toISOString().split('T')[0],
                 ultimaVisita: new Date().toISOString().split('T')[0]
             };
-            
+
             setUsuarios(prev => [...prev, usuarioCreado]);
             setModalNuevoUsuario(false);
             setNuevoUsuario({
-                nombre: '', 
-                apellido: '', 
-                email: '', 
-                telefono: '', 
+                nombre: '',
+                apellido: '',
+                email: '',
+                telefono: '',
                 direccion: '',
-                fechaNacimiento: '', 
-                genero: 'Masculino', 
-                rol: 'CLIENTE', 
-                membresia: 'Básica', 
+                fechaNacimiento: '',
+                genero: 'Masculino',
+                rol: 'CLIENTE',
+                membresia: 'Básica',
                 estado: 'Activo'
             });
             alert("Usuario creado exitosamente");
@@ -323,7 +324,7 @@ function AdminUsuariosPage() {
     return (
         <div className="admin-usuarios-page">
             {/* Header */}
-    
+
 
             {/* Hero Section */}
             <section className="hero-admin">
@@ -411,7 +412,7 @@ function AdminUsuariosPage() {
                                 <FontAwesomeIcon icon={faSync} />
                                 Recargar
                             </button>
-                            <button 
+                            <button
                                 className="btn-nuevo"
                                 onClick={() => setModalNuevoUsuario(true)}
                             >
@@ -643,7 +644,7 @@ function AdminUsuariosPage() {
                             </div>
 
                             <div className="modal-actions">
-                                <button 
+                                <button
                                     className="btn-primary"
                                     onClick={() => handleEditarUsuario(usuarioSeleccionado.id)}
                                 >
@@ -652,7 +653,7 @@ function AdminUsuariosPage() {
                                 <button className="btn-secondary">
                                     <FontAwesomeIcon icon={faEnvelope} /> Enviar Email
                                 </button>
-                                <button 
+                                <button
                                     className="btn-danger"
                                     onClick={() => handleEliminar(usuarioSeleccionado.id)}
                                 >
@@ -670,71 +671,85 @@ function AdminUsuariosPage() {
                     <div className="modal-content modal-large" onClick={e => e.stopPropagation()}>
                         <button className="modal-close" onClick={() => setModalNuevoUsuario(false)}>×</button>
                         <h2>Crear Nuevo Usuario</h2>
-                        
+
                         <form onSubmit={handleCrearUsuario} className="form-nuevo-usuario">
                             <div className="form-grid">
                                 <div className="form-group">
                                     <label>Nombre *</label>
-                                    <input 
-                                        type="text" 
-                                        name="nombre" 
-                                        value={nuevoUsuario.nombre} 
-                                        onChange={handleNuevoUsuarioChange} 
-                                        required 
+                                    <input
+                                        type="text"
+                                        name="nombre"
+                                        value={nuevoUsuario.nombre}
+                                        onChange={handleNuevoUsuarioChange}
+                                        required
                                     />
                                 </div>
                                 <div className="form-group">
                                     <label>Apellido *</label>
-                                    <input 
-                                        type="text" 
-                                        name="apellido" 
-                                        value={nuevoUsuario.apellido} 
-                                        onChange={handleNuevoUsuarioChange} 
-                                        required 
+                                    <input
+                                        type="text"
+                                        name="apellido"
+                                        value={nuevoUsuario.apellido}
+                                        onChange={handleNuevoUsuarioChange}
+                                        required
                                     />
                                 </div>
                                 <div className="form-group">
                                     <label>Email *</label>
-                                    <input 
-                                        type="email" 
-                                        name="email" 
-                                        value={nuevoUsuario.email} 
-                                        onChange={handleNuevoUsuarioChange} 
-                                        required 
+                                    <input
+                                        type="email"
+                                        name="email"
+                                        value={nuevoUsuario.email}
+                                        onChange={handleNuevoUsuarioChange}
+                                        required
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label>DNI *</label>
+                                    <input
+                                        type="text"
+                                        name="dni"
+                                        placeholder="Ingrese DNI"
+                                        value={nuevoUsuario.dni}
+                                        onChange={handleNuevoUsuarioChange}
+                                        maxLength="8"
+                                        pattern="\d{8}"
+                                        title="Debe contener exactamente 8 dígitos numéricos"
+                                        required
                                     />
                                 </div>
                                 <div className="form-group">
                                     <label>Teléfono</label>
-                                    <input 
-                                        type="text" 
-                                        name="telefono" 
-                                        value={nuevoUsuario.telefono} 
-                                        onChange={handleNuevoUsuarioChange} 
+                                    <input
+                                        type="text"
+                                        name="telefono"
+                                        value={nuevoUsuario.telefono}
+                                        onChange={handleNuevoUsuarioChange}
                                     />
                                 </div>
                                 <div className="form-group">
                                     <label>Dirección</label>
-                                    <input 
-                                        type="text" 
-                                        name="direccion" 
-                                        value={nuevoUsuario.direccion} 
-                                        onChange={handleNuevoUsuarioChange} 
+                                    <input
+                                        type="text"
+                                        name="direccion"
+                                        value={nuevoUsuario.direccion}
+                                        onChange={handleNuevoUsuarioChange}
                                     />
                                 </div>
                                 <div className="form-group">
                                     <label>Fecha de nacimiento</label>
-                                    <input 
-                                        type="date" 
-                                        name="fechaNacimiento" 
-                                        value={nuevoUsuario.fechaNacimiento} 
-                                        onChange={handleNuevoUsuarioChange} 
+                                    <input
+                                        type="date"
+                                        name="fechaNacimiento"
+                                        value={nuevoUsuario.fechaNacimiento}
+                                        onChange={handleNuevoUsuarioChange}
                                     />
                                 </div>
                                 <div className="form-group">
                                     <label>Género</label>
-                                    <select 
-                                        name="genero" 
-                                        value={nuevoUsuario.genero} 
+                                    <select
+                                        name="genero"
+                                        value={nuevoUsuario.genero}
                                         onChange={handleNuevoUsuarioChange}
                                     >
                                         <option value="Masculino">Masculino</option>
@@ -745,9 +760,9 @@ function AdminUsuariosPage() {
                                 </div>
                                 <div className="form-group">
                                     <label>Rol</label>
-                                    <select 
-                                        name="rol" 
-                                        value={nuevoUsuario.rol} 
+                                    <select
+                                        name="rol"
+                                        value={nuevoUsuario.rol}
                                         onChange={handleNuevoUsuarioChange}
                                     >
                                         <option value="CLIENTE">Cliente</option>
@@ -756,9 +771,9 @@ function AdminUsuariosPage() {
                                 </div>
                                 <div className="form-group">
                                     <label>Membresía</label>
-                                    <select 
-                                        name="membresia" 
-                                        value={nuevoUsuario.membresia} 
+                                    <select
+                                        name="membresia"
+                                        value={nuevoUsuario.membresia}
                                         onChange={handleNuevoUsuarioChange}
                                     >
                                         <option value="Básica">Básica</option>
@@ -768,9 +783,9 @@ function AdminUsuariosPage() {
                                 </div>
                                 <div className="form-group">
                                     <label>Estado</label>
-                                    <select 
-                                        name="estado" 
-                                        value={nuevoUsuario.estado} 
+                                    <select
+                                        name="estado"
+                                        value={nuevoUsuario.estado}
                                         onChange={handleNuevoUsuarioChange}
                                     >
                                         <option value="Activo">Activo</option>
@@ -778,10 +793,10 @@ function AdminUsuariosPage() {
                                     </select>
                                 </div>
                             </div>
-                            
+
                             <div className="form-actions">
-                                <button 
-                                    type="button" 
+                                <button
+                                    type="button"
                                     className="btn-cancelar"
                                     onClick={() => setModalNuevoUsuario(false)}
                                 >

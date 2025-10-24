@@ -4,6 +4,8 @@ import { useNavigate, Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import logo from "../assets/Imagenes/logo.png";
 import icono from "../assets/Imagenes/usuario.png";
+import { faEnvelopeCircleCheck, faIdCard } from '@fortawesome/free-solid-svg-icons';
+
 import {
     faUser,
     faEnvelope,
@@ -18,6 +20,11 @@ function RegistroPage() {
         nombre: '',
         apellido: '',
         email: '',
+        dni: '',
+        telefono: '',
+        direccion: '',
+        fechaNacimiento: '',
+        genero: '',
         password: '',
         confirmPassword: ''
     });
@@ -58,6 +65,7 @@ function RegistroPage() {
             const usuarioParaEnviar = {
                 nombre: usuario.nombre,
                 apellido: usuario.apellido,
+                dni: usuario.dni,
                 email: usuario.email,
                 password: usuario.password,
                 telefono: usuario.telefono,
@@ -93,6 +101,7 @@ function RegistroPage() {
 
     return (
         <div className="registro-page">
+
             <div className="registro-main-wrapper">
                 <div className="registro-container">
                     <div className="registro-form-content">
@@ -136,6 +145,20 @@ function RegistroPage() {
                                     />
                                 </div>
 
+                                <div className="registro-input-field">
+                                    <FontAwesomeIcon icon={faIdCard} />
+                                    <input
+                                        type="text"
+                                        name="dni"
+                                        placeholder="   DNI"
+                                        value={usuario.dni}
+                                        onChange={handleChange}
+                                        maxLength="8"
+                                        pattern="\d{8}"
+                                        title="Debe tener 8 dígitos numéricos"
+                                        required
+                                    />
+                                </div>
                                 {/* Campo Email */}
                                 <div className="registro-input-field">
                                     <FontAwesomeIcon icon={faEnvelope} />

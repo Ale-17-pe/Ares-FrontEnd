@@ -22,7 +22,8 @@ import {
     faCrown as faMember,
     faIdCard,
     faHome,
-    faShieldAlt
+    faShieldAlt,
+    faAddressCard
 } from '@fortawesome/free-solid-svg-icons';
 import './css/AdminEditarUsuario.css';
 
@@ -33,6 +34,7 @@ function AdminEditarUsuario() {
     const [saving, setSaving] = useState(false);
     const [usuario, setUsuario] = useState(null);
     const [formData, setFormData] = useState({
+        dni: '',
         nombre: '',
         apellido: '',
         email: '',
@@ -42,38 +44,24 @@ function AdminEditarUsuario() {
         genero: 'Masculino',
         rol: 'CLIENTE',
         membresia: 'Básica',
-        estado: 'Activo',
-        fechaRegistro: '',
-        ultimaVisita: ''
+        estado: 'Activo'
     });
     const [errors, setErrors] = useState({});
     const [successMessage, setSuccessMessage] = useState('');
-
-    // Datos de ejemplo como fallback
-    const usuarioEjemplo = {
-        id: parseInt(id),
-        nombre: "Juan",
-        apellido: "Pérez",
-        email: "juan.perez@email.com",
-        telefono: "+51 987 654 321",
-        direccion: "Av. Principal 123, Lima, Perú",
-        fechaNacimiento: "1990-05-15",
-        fechaRegistro: "2024-01-15",
-        genero: "Masculino",
-        membresia: "Premium",
-        estado: "Activo",
-        rol: "CLIENTE",
-        ultimaVisita: "2024-12-19"
-    };
 
     useEffect(() => {
         const cargarUsuario = async () => {
             try {
                 setLoading(true);
+                console.log('🔄 Cargando usuario con ID:', id);
+                
                 const data = await obtenerUsuarioPorId(id);
+                console.log('📊 Datos recibidos del API:', data);
 
                 if (data) {
+                    // Formatear los datos para el formulario
                     const usuarioData = {
+                        dni: data.dni || '',
                         nombre: data.nombre || '',
                         apellido: data.apellido || '',
                         email: data.email || '',
@@ -83,43 +71,19 @@ function AdminEditarUsuario() {
                         genero: data.genero || 'Masculino',
                         rol: data.role || 'CLIENTE',
                         membresia: data.membresia || 'Básica',
-                        estado: data.activo ? 'Activo' : 'Inactivo',
-                        fechaRegistro: data.fechaRegistro || '',
-                        ultimaVisita: data.ultimaVisita || ''
+                        estado: data.activo ? 'Activo' : 'Inactivo'
                     };
 
                     setUsuario(data);
                     setFormData(usuarioData);
+                    console.log('✅ Datos cargados en formulario:', usuarioData);
                 } else {
-                    setUsuario(usuarioEjemplo);
-                    setFormData({
-                        nombre: usuarioEjemplo.nombre,
-                        apellido: usuarioEjemplo.apellido,
-                        email: usuarioEjemplo.email,
-                        telefono: usuarioEjemplo.telefono,
-                        direccion: usuarioEjemplo.direccion,
-                        fechaNacimiento: usuarioEjemplo.fechaNacimiento,
-                        genero: usuarioEjemplo.genero,
-                        rol: usuarioEjemplo.role,
-                        membresia: usuarioEjemplo.membresia,
-                        estado: usuarioEjemplo.activo ? 'Activo' : 'Inactivo'
-                    });
+                    console.log('⚠️ No se recibieron datos del API');
+                    setErrors({ load: 'No se pudo cargar la información del usuario' });
                 }
             } catch (error) {
-                console.error("Error al cargar usuario:", error);
-                setUsuario(usuarioEjemplo);
-                setFormData({
-                    nombre: usuarioEjemplo.nombre,
-                    apellido: usuarioEjemplo.apellido,
-                    email: usuarioEjemplo.email,
-                    telefono: usuarioEjemplo.telefono,
-                    direccion: usuarioEjemplo.direccion,
-                    fechaNacimiento: usuarioEjemplo.fechaNacimiento,
-                    genero: usuarioEjemplo.genero,
-                    rol: usuarioEjemplo.role,
-                    membresia: usuarioEjemplo.membresia,
-                    estado: usuarioEjemplo.activo ? 'Activo' : 'Inactivo'
-                });
+                console.error("❌ Error al cargar usuario:", error);
+                setErrors({ load: 'Error al cargar la información del usuario' });
             } finally {
                 setLoading(false);
             }
@@ -135,6 +99,7 @@ function AdminEditarUsuario() {
             [name]: value
         }));
 
+        // Limpiar error del campo cuando el usuario empiece a escribir
         if (errors[name]) {
             setErrors(prev => ({
                 ...prev,
@@ -145,6 +110,13 @@ function AdminEditarUsuario() {
 
     const validateForm = () => {
         const newErrors = {};
+
+        // Validación de DNI
+        if (!formData.dni.trim()) {
+            newErrors.dni = 'El DNI es obligatorio';
+        } else if (!/^\d{8}$/.test(formData.dni)) {
+            newErrors.dni = 'El DNI debe tener exactamente 8 dígitos numéricos';
+        }
 
         if (!formData.nombre.trim()) {
             newErrors.nombre = 'El nombre es obligatorio';
@@ -186,19 +158,19 @@ function AdminEditarUsuario() {
         return Object.keys(newErrors).length === 0;
     };
 
-
-   const handleSubmit = async (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        
+
         if (!validateForm()) {
             return;
         }
 
         try {
             setSaving(true);
-            
+
             // Preparar datos para la API
             const datosActualizacion = {
+                dni: formData.dni.trim(),
                 nombre: formData.nombre.trim(),
                 apellido: formData.apellido.trim(),
                 email: formData.email.trim(),
@@ -211,40 +183,40 @@ function AdminEditarUsuario() {
                 activo: formData.estado === 'Activo'
             };
 
+            console.log('📤 Enviando datos actualizados:', datosActualizacion);
             await actualizarUsuario(id, datosActualizacion);
-            
+
             setSuccessMessage('¡Usuario actualizado exitosamente!');
-            
+
             // Redirigir después de 2 segundos
             setTimeout(() => {
                 navigate('/admin/usuarios');
             }, 2000);
-            
+
         } catch (error) {
-            console.error("Error al actualizar usuario:", error);
+            console.error("❌ Error al actualizar usuario:", error);
             let errorMessage = 'Error al actualizar el usuario. Intente nuevamente.';
-            
+
             if (error.response) {
-                // Error de la API
                 if (error.response.status === 400) {
                     errorMessage = 'Datos inválidos. Por favor verifica la información.';
                 } else if (error.response.status === 409) {
-                    errorMessage = 'El email ya está en uso por otro usuario.';
+                    errorMessage = 'El DNI o email ya está en uso por otro usuario.';
                 } else if (error.response.status === 404) {
                     errorMessage = 'Usuario no encontrado.';
                 }
             }
-            
+
             setErrors({ submit: errorMessage });
         } finally {
             setSaving(false);
         }
     };
 
-
     const handleReset = () => {
         if (usuario) {
             setFormData({
+                dni: usuario.dni || '',
                 nombre: usuario.nombre || '',
                 apellido: usuario.apellido || '',
                 email: usuario.email || '',
@@ -254,9 +226,7 @@ function AdminEditarUsuario() {
                 genero: usuario.genero || 'Masculino',
                 rol: usuario.role || 'CLIENTE',
                 membresia: usuario.membresia || 'Básica',
-                estado: usuario.activo ? 'Activo' : 'Inactivo',
-                fechaRegistro: usuario.fechaRegistro || '',
-                ultimaVisita: usuario.ultimaVisita || ''
+                estado: usuario.activo ? 'Activo' : 'Inactivo'
             });
         }
         setErrors({});
@@ -288,29 +258,6 @@ function AdminEditarUsuario() {
     return (
         <div className="admin-editar-page">
             {/* Header */}
-            <header className="main-header">
-                <div className="header-container">
-                    <div className="logo-container">
-                        <Link to="/">
-                            <img src={logo} alt="Logo AresFitness" />
-                        </Link>
-                    </div>
-                    <nav className="main-nav">
-                        <ul>
-                            <li><Link to="/ubicacion"><FontAwesomeIcon icon={faMapMarkerAlt} /> UBICACIÓN</Link></li>
-                            <li><Link to="/ejercicios"><FontAwesomeIcon icon={faRunning} /> EJERCICIOS</Link></li>
-                            <li><Link to="/membresias"><FontAwesomeIcon icon={faCrown} /> MEMBRESÍAS</Link></li>
-                        </ul>
-                    </nav>
-                    <div className="header-actions">
-                        <button className="user-btn"><FontAwesomeIcon icon={faUser} /> Mi Cuenta</button>
-                        <div className="auth-dropdown">
-                            <Link to="/login"><FontAwesomeIcon icon={faSignInAlt} /> Iniciar Sesión</Link>
-                            <Link to="/registro"><FontAwesomeIcon icon={faUserPlus} /> Registrarse</Link>
-                        </div>
-                    </div>
-                </div>
-            </header>
 
             {/* Hero Section */}
             <section className="hero-editar">
@@ -334,37 +281,45 @@ function AdminEditarUsuario() {
                         <span className="breadcrumb-current">Editar Usuario #{id}</span>
                     </div>
 
-                    <div className="user-quick-info">
-                        <div className="user-avatar">
-                            {usuario?.nombre?.charAt(0)}{usuario?.apellido?.charAt(0)}
-                        </div>
-                        <div className="user-details">
-                            <h3>{usuario?.nombre} {usuario?.apellido}</h3>
-                            <div className="user-badges">
-                                <span
-                                    className="badge membresia-badge"
-                                    style={{ backgroundColor: getMembresiaColor(usuario?.membresia) }}
-                                >
-                                    {usuario?.membresia}
-                                </span>
-                                <span
-                                    className="badge estado-badge"
-                                    style={{ backgroundColor: getEstadoColor(usuario?.estado) }}
-                                >
-                                    {usuario?.estado}
-                                </span>
-                                <span className="badge rol-badge">
-                                    {usuario?.rol}
-                                </span>
+                    {usuario && (
+                        <div className="user-quick-info">
+                            <div className="user-avatar">
+                                {usuario.nombre?.charAt(0)}{usuario.apellido?.charAt(0)}
+                            </div>
+                            <div className="user-details">
+                                <h3>{usuario.nombre} {usuario.apellido}</h3>
+                                <div className="user-badges">
+                                    <span
+                                        className="badge membresia-badge"
+                                        style={{ backgroundColor: getMembresiaColor(usuario.membresia) }}
+                                    >
+                                        {usuario.membresia}
+                                    </span>
+                                    <span
+                                        className="badge estado-badge"
+                                        style={{ backgroundColor: getEstadoColor(usuario.activo ? 'Activo' : 'Inactivo') }}
+                                    >
+                                        {usuario.activo ? 'Activo' : 'Inactivo'}
+                                    </span>
+                                    <span className="badge rol-badge">
+                                        {usuario.role}
+                                    </span>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    )}
                 </div>
             </section>
 
             {/* Formulario de Edición */}
             <section className="form-section">
                 <div className="form-container">
+                    {errors.load && (
+                        <div className="error-message">
+                            {errors.load}
+                        </div>
+                    )}
+
                     {successMessage && (
                         <div className="success-message">
                             <FontAwesomeIcon icon={faSave} />
@@ -388,6 +343,27 @@ function AdminEditarUsuario() {
                                 </div>
                                 <div className="form-fields">
                                     <div className="form-group">
+                                        <label htmlFor="dni">
+                                            DNI *
+                                            {errors.dni && <span className="error-text"> - {errors.dni}</span>}
+                                        </label>
+                                        <div className="input-with-icon">
+                                            <FontAwesomeIcon icon={faAddressCard} className="input-icon" />
+                                            <input
+                                                type="text"
+                                                id="dni"
+                                                name="dni"
+                                                value={formData.dni}
+                                                onChange={handleInputChange}
+                                                className={errors.dni ? 'error' : ''}
+                                                placeholder="Ingrese el DNI (8 dígitos)"
+                                                maxLength="8"
+                                                disabled={saving}
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div className="form-group">
                                         <label htmlFor="nombre">
                                             Nombre *
                                             {errors.nombre && <span className="error-text"> - {errors.nombre}</span>}
@@ -400,6 +376,7 @@ function AdminEditarUsuario() {
                                             onChange={handleInputChange}
                                             className={errors.nombre ? 'error' : ''}
                                             placeholder="Ingrese el nombre"
+                                            disabled={saving}
                                         />
                                     </div>
 
@@ -416,6 +393,7 @@ function AdminEditarUsuario() {
                                             onChange={handleInputChange}
                                             className={errors.apellido ? 'error' : ''}
                                             placeholder="Ingrese el apellido"
+                                            disabled={saving}
                                         />
                                     </div>
 
@@ -434,6 +412,7 @@ function AdminEditarUsuario() {
                                                 onChange={handleInputChange}
                                                 className={errors.email ? 'error' : ''}
                                                 placeholder="usuario@ejemplo.com"
+                                                disabled={saving}
                                             />
                                         </div>
                                     </div>
@@ -453,6 +432,7 @@ function AdminEditarUsuario() {
                                                 onChange={handleInputChange}
                                                 className={errors.telefono ? 'error' : ''}
                                                 placeholder="+51 XXX XXX XXX"
+                                                disabled={saving}
                                             />
                                         </div>
                                     </div>
@@ -464,6 +444,7 @@ function AdminEditarUsuario() {
                                             name="genero"
                                             value={formData.genero}
                                             onChange={handleInputChange}
+                                            disabled={saving}
                                         >
                                             <option value="Masculino">Masculino</option>
                                             <option value="Femenino">Femenino</option>
@@ -486,12 +467,14 @@ function AdminEditarUsuario() {
                                                 value={formData.fechaNacimiento}
                                                 onChange={handleInputChange}
                                                 className={errors.fechaNacimiento ? 'error' : ''}
+                                                disabled={saving}
                                             />
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
+                            {/* Resto del formulario se mantiene igual... */}
                             {/* Información de Dirección */}
                             <div className="form-section-card">
                                 <div className="section-header">
@@ -510,6 +493,7 @@ function AdminEditarUsuario() {
                                                 value={formData.direccion}
                                                 onChange={handleInputChange}
                                                 placeholder="Ingrese la dirección completa"
+                                                disabled={saving}
                                             />
                                         </div>
                                     </div>
@@ -530,6 +514,7 @@ function AdminEditarUsuario() {
                                             name="rol"
                                             value={formData.rol}
                                             onChange={handleInputChange}
+                                            disabled={saving}
                                         >
                                             <option value="CLIENTE">Cliente</option>
                                             <option value="RECEPCIONISTA">Recepcionista</option>
@@ -544,6 +529,7 @@ function AdminEditarUsuario() {
                                             name="membresia"
                                             value={formData.membresia}
                                             onChange={handleInputChange}
+                                            disabled={saving}
                                         >
                                             <option value="Básica">Básica</option>
                                             <option value="Premium">Premium</option>
@@ -558,6 +544,7 @@ function AdminEditarUsuario() {
                                             name="estado"
                                             value={formData.estado}
                                             onChange={handleInputChange}
+                                            disabled={saving}
                                         >
                                             <option value="Activo">Activo</option>
                                             <option value="Inactivo">Inactivo</option>
@@ -567,7 +554,7 @@ function AdminEditarUsuario() {
                                 </div>
                             </div>
 
-                            {/* Información del Sistema */}
+                            {/* Información del Sistema (Solo lectura) */}
                             <div className="form-section-card">
                                 <div className="section-header">
                                     <FontAwesomeIcon icon={faDumbbell} />
@@ -579,12 +566,12 @@ function AdminEditarUsuario() {
                                         <div className="readonly-field">
                                             <FontAwesomeIcon icon={faCalendar} />
                                             <span>
-                                                {formData.fechaRegistro ?
-                                                    new Date(formData.fechaRegistro).toLocaleDateString('es-ES', {
+                                                {usuario?.fechaRegistro ? 
+                                                    new Date(usuario.fechaRegistro).toLocaleDateString('es-ES', {
                                                         year: 'numeric',
                                                         month: 'long',
                                                         day: 'numeric'
-                                                    }) :
+                                                    }) : 
                                                     'No disponible'
                                                 }
                                             </span>
@@ -596,12 +583,12 @@ function AdminEditarUsuario() {
                                         <div className="readonly-field">
                                             <FontAwesomeIcon icon={faDumbbell} />
                                             <span>
-                                                {formData.ultimaVisita ?
-                                                    new Date(formData.ultimaVisita).toLocaleDateString('es-ES', {
+                                                {usuario?.ultimaVisita ? 
+                                                    new Date(usuario.ultimaVisita).toLocaleDateString('es-ES', {
                                                         year: 'numeric',
                                                         month: 'long',
                                                         day: 'numeric'
-                                                    }) :
+                                                    }) : 
                                                     'No registrada'
                                                 }
                                             </span>
@@ -630,7 +617,7 @@ function AdminEditarUsuario() {
                                 <FontAwesomeIcon icon={faSync} />
                                 Restablecer
                             </button>
-
+                            
                             <button
                                 type="button"
                                 className="btn btn-cancel"
@@ -640,7 +627,7 @@ function AdminEditarUsuario() {
                                 <FontAwesomeIcon icon={faTimes} />
                                 Cancelar
                             </button>
-
+                            
                             <button
                                 type="submit"
                                 className="btn btn-primary"

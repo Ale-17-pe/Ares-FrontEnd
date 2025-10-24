@@ -90,11 +90,9 @@ export const useHomeEffects = () => {
     }, [isMenuOpen, isDropdownOpen, closeDropdown]);
 
     return {
-        // Estados
         isMenuOpen,
         isDropdownOpen,
         
-        // Refs
         menuBtnRef,
         menuRef,
         dropdownBtnRef,
@@ -102,7 +100,6 @@ export const useHomeEffects = () => {
         userMenuBtnRef,
         authDropdownRef,
         
-        // Funciones
         toggleMenu,
         closeMenu,
         toggleDropdown,

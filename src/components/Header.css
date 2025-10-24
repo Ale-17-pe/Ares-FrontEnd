@@ -990,7 +990,6 @@ body.menu-open {
         padding: 80px 25px 30px !important;
         transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
         z-index: 9999 !important;
-        overflow-y: auto !important;
         box-shadow: -5px 0 50px rgba(255, 215, 0, 0.2) !important;
         border-left: 1px solid rgba(255, 215, 0, 0.3) !important;
         position: relative;

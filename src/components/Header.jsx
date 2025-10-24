@@ -16,7 +16,7 @@ import './Header.css';
 
 function Header() {
     const { usuario, logout } = useAuth();
-    const navigate = useNavigate(); 
+    const navigate = useNavigate();
 
     const {
         isMenuOpen, toggleMenu, closeMenu,
@@ -30,7 +30,7 @@ function Header() {
         logout();
         closeDropdown();
         closeMenu();
-        navigate('/'); 
+        navigate('/');
     }
 
     const isAdmin = usuario && (usuario.role === 'ADMIN' || usuario.role === 'RECEPCIONISTA');
@@ -42,6 +42,7 @@ function Header() {
                 <div className="logo-container">
                     <Link to={isAdmin ? "/admin" : "/"} onClick={closeMenu}>
                         <img src={logo} alt="Logo Ares Fitness" />
+
                     </Link>
                 </div>
 
@@ -75,17 +76,42 @@ function Header() {
                                 </Link>
                             </li>
                         </ul>
-
                         {/* Botones de acción en menú móvil */}
                         <div className="mobile-actions">
                             {!usuario ? (
                                 <div className="mobile-auth-buttons">
+                                    <li>
+                                        <Link to="/" onClick={closeMenu}>
+                                            <FontAwesomeIcon icon={faHome} /> INICIO
+                                        </Link>
+                                    </li>
+                                    <li>
+                                        <Link to="/ubicacion" onClick={closeMenu}>
+                                            <FontAwesomeIcon icon={faMapMarkerAlt} /> UBICACIÓN
+                                        </Link>
+                                    </li>
+                                    <li>
+                                        <Link to="/ejercicios" onClick={closeMenu}>
+                                            <FontAwesomeIcon icon={faRunning} /> EJERCICIOS
+                                        </Link>
+                                    </li>
+                                    <li>
+                                        <Link to="/planes" onClick={closeMenu}>
+                                            <FontAwesomeIcon icon={faCrown} /> MEMBRESÍAS
+                                        </Link>
+                                    </li>
+                                    <li>
+                                        <Link to="/nosotros" onClick={closeMenu}>
+                                            <FontAwesomeIcon icon={faUsers} /> NOSOTROS
+                                        </Link>
+                                    </li>
                                     <Link to="/login" className="btn-login-mobile" onClick={closeMenu}>
                                         <FontAwesomeIcon icon={faSignInAlt} /> Iniciar Sesión
                                     </Link>
                                     <Link to="/registro" className="btn-register-mobile" onClick={closeMenu}>
                                         <FontAwesomeIcon icon={faUserPlus} /> Registrarse
                                     </Link>
+
                                 </div>
                             ) : (
                                 <div className="mobile-user-info">
