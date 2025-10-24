@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { 
-    faComment, 
-    faUser, 
-    faStar, 
+import {
+    faComment,
+    faUser,
+    faStar,
     faPaperPlane,
     faClock,
-    faTrash,
-    faEdit
+    faCheckCircle
 } from '@fortawesome/free-solid-svg-icons';
 import './css/ComentariosSection.css';
 
@@ -20,6 +19,11 @@ function ComentariosSection() {
         calificacion: 5
     });
     const [mostrarFormulario, setMostrarFormulario] = useState(false);
+    const [enviando, setEnviando] = useState(false);
+    const [enviado, setEnviado] = useState(false);
+
+    // URL de tu Formspree
+    const FORMSPREE_URL = "https://formspree.io/f/xyzbgkwz";
 
     // Cargar comentarios del localStorage al iniciar
     useEffect(() => {
@@ -27,7 +31,7 @@ function ComentariosSection() {
         if (comentariosGuardados) {
             setComentarios(JSON.parse(comentariosGuardados));
         } else {
-            // Comentarios de ejemplo para empezar
+            // Comentarios de ejemplo
             setComentarios(comentariosEjemplo);
         }
     }, []);
@@ -49,14 +53,6 @@ function ComentariosSection() {
             calificacion: 5,
             fecha: '2024-01-10',
             avatar: '👨‍💻'
-        },
-        {
-            id: 3,
-            nombre: 'Ana Martínez',
-            mensaje: 'Llevo 6 meses y he transformado mi cuerpo completamente. El plan nutricional fue clave para mis resultados.',
-            calificacion: 4,
-            fecha: '2024-01-08',
-            avatar: '👩‍🎓'
         }
     ];
 
@@ -75,13 +71,52 @@ function ComentariosSection() {
         }));
     };
 
-    const handleSubmit = (e) => {
+    // ✅ NUEVA FUNCIÓN: Enviar a Formspree
+    const enviarAFormspree = async (datosComentario) => {
+        try {
+            const response = await fetch(FORMSPREE_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    nombre: datosComentario.nombre,
+                    email: datosComentario.email,
+                    mensaje: datosComentario.mensaje,
+                    calificacion: datosComentario.calificacion,
+                    fecha: new Date().toLocaleDateString('es-ES'),
+                    tipo: 'Nuevo Comentario - AresFitness',
+                    _subject: `Nuevo comentario de ${datosComentario.nombre}`
+                })
+            });
+
+            if (response.ok) {
+                console.log('Comentario enviado a Formspree correctamente');
+                return true;
+            } else {
+                console.error('Error al enviar a Formspree');
+                return false;
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            return false;
+        }
+    };
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        
+
         if (!nuevoComentario.nombre.trim() || !nuevoComentario.mensaje.trim()) {
             alert('Por favor, completa al menos tu nombre y comentario.');
             return;
         }
+
+        if (nuevoComentario.mensaje.length > 500) {
+            alert('El comentario no puede tener más de 500 caracteres.');
+            return;
+        }
+
+        setEnviando(true);
 
         const comentario = {
             id: Date.now(),
@@ -93,20 +128,35 @@ function ComentariosSection() {
             avatar: getAvatarAleatorio()
         };
 
-        const nuevosComentarios = [comentario, ...comentarios];
-        setComentarios(nuevosComentarios);
-        localStorage.setItem('comentariosAresFitness', JSON.stringify(nuevosComentarios));
-        
-        // Resetear formulario
-        setNuevoComentario({
-            nombre: '',
-            email: '',
-            mensaje: '',
-            calificacion: 5
-        });
-        setMostrarFormulario(false);
-        
-        alert('¡Gracias por tu comentario! Tu opinión ayuda a mejorar nuestro servicio.');
+        try {
+            // 1. Enviar a Formspree (para que tú lo recibas)
+            const enviadoFormspree = await enviarAFormspree(comentario);
+
+            // 2. Guardar localmente (para mostrar en la página)
+            const nuevosComentarios = [comentario, ...comentarios];
+            setComentarios(nuevosComentarios);
+            localStorage.setItem('comentariosAresFitness', JSON.stringify(nuevosComentarios));
+
+            // 3. Resetear formulario
+            setNuevoComentario({
+                nombre: '',
+                email: '',
+                mensaje: '',
+                calificacion: 5
+            });
+
+            setEnviado(true);
+            setMostrarFormulario(false);
+
+            setTimeout(() => {
+                setEnviado(false);
+            }, 5000);
+
+        } catch (error) {
+            alert('Error al enviar el comentario. Por favor, intenta nuevamente.');
+        } finally {
+            setEnviando(false);
+        }
     };
 
     const getAvatarAleatorio = () => {
@@ -133,6 +183,14 @@ function ComentariosSection() {
     return (
         <section className="comentarios-section">
             <div className="container">
+                {/* Mensaje de éxito */}
+                {enviado && (
+                    <div className="mensaje-exito">
+                        <FontAwesomeIcon icon={faCheckCircle} />
+                        <span>¡Comentario enviado correctamente! Revisa tu email para confirmar.</span>
+                    </div>
+                )}
+
                 <div className="section-title">
                     <FontAwesomeIcon icon={faComment} className="section-icon" />
                     <h2>OPINIONES DE NUESTROS MIEMBROS</h2>
@@ -148,7 +206,7 @@ function ComentariosSection() {
                     </div>
                     <div className="estadistica-item">
                         <span className="numero">
-                            {comentarios.length > 0 
+                            {comentarios.length > 0
                                 ? (comentarios.reduce((acc, curr) => acc + curr.calificacion, 0) / comentarios.length).toFixed(1)
                                 : '5.0'
                             }
@@ -165,9 +223,10 @@ function ComentariosSection() {
 
                 {/* Botón para agregar comentario */}
                 <div className="agregar-comentario-btn-container">
-                    <button 
+                    <button
                         className="btn-agregar-comentario"
                         onClick={() => setMostrarFormulario(!mostrarFormulario)}
+                        disabled={enviando}
                     >
                         <FontAwesomeIcon icon={faComment} />
                         {mostrarFormulario ? 'CANCELAR' : 'AGREGAR MI OPINIÓN'}
@@ -179,7 +238,7 @@ function ComentariosSection() {
                     <div className="formulario-comentario-container">
                         <form className="formulario-comentario" onSubmit={handleSubmit}>
                             <h3>Comparte tu experiencia</h3>
-                            
+
                             <div className="form-row">
                                 <div className="form-group">
                                     <label htmlFor="nombre">Tu Nombre *</label>
@@ -191,6 +250,7 @@ function ComentariosSection() {
                                         onChange={handleInputChange}
                                         placeholder="¿Cómo te llamas?"
                                         required
+                                        disabled={enviando}
                                     />
                                 </div>
                                 <div className="form-group">
@@ -202,6 +262,7 @@ function ComentariosSection() {
                                         value={nuevoComentario.email}
                                         onChange={handleInputChange}
                                         placeholder="tu@email.com"
+                                        disabled={enviando}
                                     />
                                 </div>
                             </div>
@@ -215,6 +276,7 @@ function ComentariosSection() {
                                             type="button"
                                             className={`estrella ${estrella <= nuevoComentario.calificacion ? 'activa' : ''}`}
                                             onClick={() => handleCalificacionClick(estrella)}
+                                            disabled={enviando}
                                         >
                                             <FontAwesomeIcon icon={faStar} />
                                         </button>
@@ -235,21 +297,32 @@ function ComentariosSection() {
                                     placeholder="Comparte tu experiencia en AresFitness... ¿Qué te gustó? ¿Cómo ha sido tu transformación?"
                                     rows="5"
                                     required
+                                    disabled={enviando}
+                                    maxLength="500"
                                 />
                                 <small className="contador-caracteres">
                                     {nuevoComentario.mensaje.length}/500 caracteres
                                 </small>
                             </div>
 
-                            <button type="submit" className="btn-enviar-comentario">
+                            <button
+                                type="submit"
+                                className="btn-enviar-comentario"
+                                disabled={enviando}
+                            >
                                 <FontAwesomeIcon icon={faPaperPlane} />
-                                PUBLICAR MI OPINIÓN
+                                {enviando ? 'ENVIANDO...' : 'PUBLICAR MI OPINIÓN'}
                             </button>
+
+                            <div className="info-formspree">
+                                <small>
+                                    📧 <strong>Importante:</strong> Después de enviar, revisa tu email para confirmar el comentario.
+                                    Los comentarios se mostrarán después de tu confirmación.
+                                </small>
+                            </div>
                         </form>
                     </div>
                 )}
-
-                {/* Lista de comentarios */}
                 <div className="lista-comentarios">
                     {comentarios.length > 0 ? (
                         comentarios.map(comentario => (
@@ -266,9 +339,9 @@ function ComentariosSection() {
                                                 </span>
                                                 <div className="calificacion">
                                                     {[...Array(5)].map((_, index) => (
-                                                        <FontAwesomeIcon 
+                                                        <FontAwesomeIcon
                                                             key={index}
-                                                            icon={faStar} 
+                                                            icon={faStar}
                                                             className={index < comentario.calificacion ? 'activa' : ''}
                                                         />
                                                     ))}
@@ -276,13 +349,6 @@ function ComentariosSection() {
                                             </div>
                                         </div>
                                     </div>
-                                    <button 
-                                        className="btn-eliminar"
-                                        onClick={() => eliminarComentario(comentario.id)}
-                                        title="Eliminar comentario"
-                                    >
-                                        <FontAwesomeIcon icon={faTrash} />
-                                    </button>
                                 </div>
                                 <div className="comentario-mensaje">
                                     <p>{comentario.mensaje}</p>
@@ -299,20 +365,33 @@ function ComentariosSection() {
                 </div>
 
                 {/* Información adicional */}
-                <div className="info-comentarios">
-                    <div className="info-item">
-                        <FontAwesomeIcon icon={faUser} />
-                        <span>Comentarios verificados de miembros reales</span>
-                    </div>
-                    <div className="info-item">
-                        <FontAwesomeIcon icon={faStar} />
-                        <span>Calificaciones basadas en experiencias reales</span>
-                    </div>
-                    <div className="info-item">
-                        <FontAwesomeIcon icon={faComment} />
-                        <span>Tus comentarios ayudan a mejorar nuestro servicio</span>
-                    </div>
-                </div>
+                <div className="highlight-cards">
+    <div className="highlight-grid">
+        <div className="highlight-card">
+            <div className="card-glow"></div>
+            <FontAwesomeIcon icon={faUser} className="highlight-icon" />
+            <h4>Miembros Reales</h4>
+            <p>Comentarios 100% verificados de nuestra comunidad fitness</p>
+            <div className="highlight-stats">100% Verificados</div>
+        </div>
+        
+        <div className="highlight-card">
+            <div className="card-glow"></div>
+            <FontAwesomeIcon icon={faStar} className="highlight-icon" />
+            <h4>Resultados Genuinos</h4>
+            <p>Calificaciones basadas en transformaciones reales</p>
+            <div className="highlight-stats">⭐ 4.9/5</div>
+        </div>
+        
+        <div className="highlight-card">
+            <div className="card-glow"></div>
+            <FontAwesomeIcon icon={faComment} className="highlight-icon" />
+            <h4>Feedback con Impacto</h4>
+            <p>Cada opinión nos ayuda a elevar la experiencia</p>
+            <div className="highlight-stats">+500 Mejoras</div>
+        </div>
+    </div>
+</div>
             </div>
         </section>
     );

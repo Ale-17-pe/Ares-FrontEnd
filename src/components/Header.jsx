@@ -8,7 +8,14 @@ import { useAuth } from '../context/AuthContext';
 import {
     faMapMarkerAlt, faRunning, faCrown, faUser, faSignInAlt, faUserPlus,
     faSignOutAlt, faTachometerAlt, faBars, faTimes, faChevronDown,
-    faShieldAlt, faDumbbell, faHome, faUsers
+    faShieldAlt, faDumbbell, faHome, faUsers,
+    faComment,
+    faPeopleGroup,
+    faIdCard,
+    faCreditCard,
+    faUserTag,
+    faTicket,
+    faGem
 } from '@fortawesome/free-solid-svg-icons';
 
 import { useHomeEffects } from '../hooks/useHomeEffects';
@@ -50,11 +57,7 @@ function Header() {
                 {!isAdmin && (
                     <nav className={`main-nav ${isMenuOpen ? 'active' : ''}`} ref={menuRef}>
                         <ul>
-                            <li>
-                                <Link to="/" onClick={closeMenu}>
-                                    <FontAwesomeIcon icon={faHome} /> INICIO
-                                </Link>
-                            </li>
+                           
                             <li>
                                 <Link to="/ubicacion" onClick={closeMenu}>
                                     <FontAwesomeIcon icon={faMapMarkerAlt} /> UBICACIÓN
@@ -67,12 +70,17 @@ function Header() {
                             </li>
                             <li>
                                 <Link to="/planes" onClick={closeMenu}>
-                                    <FontAwesomeIcon icon={faCrown} /> MEMBRESÍAS
+                                    <FontAwesomeIcon icon={faIdCard } /> MEMBRESÍAS
                                 </Link>
                             </li>
                             <li>
                                 <Link to="/nosotros" onClick={closeMenu}>
-                                    <FontAwesomeIcon icon={faUsers} /> NOSOTROS
+                                    <FontAwesomeIcon icon={faPeopleGroup} /> NOSOTROS
+                                </Link>
+                            </li>
+                             <li>
+                                <Link to="/comentarios" onClick={closeMenu}>
+                                    <FontAwesomeIcon icon={faComment} /> COMENTARIOS
                                 </Link>
                             </li>
                         </ul>
@@ -80,11 +88,7 @@ function Header() {
                         <div className="mobile-actions">
                             {!usuario ? (
                                 <div className="mobile-auth-buttons">
-                                    <li>
-                                        <Link to="/" onClick={closeMenu}>
-                                            <FontAwesomeIcon icon={faHome} /> INICIO
-                                        </Link>
-                                    </li>
+                                   
                                     <li>
                                         <Link to="/ubicacion" onClick={closeMenu}>
                                             <FontAwesomeIcon icon={faMapMarkerAlt} /> UBICACIÓN

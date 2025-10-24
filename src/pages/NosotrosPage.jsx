@@ -2,8 +2,6 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import logo from "../assets/Imagenes/logo.png";
-import ComentariosSection from '../pages/ComentariosSection';
-
 
 import {
     faMapMarkerAlt,
@@ -12,7 +10,6 @@ import {
     faHeart,
     faShieldAlt,
     faTrophy,
-    faDumbbell as faDumbbellSolid,
     faCalendarAlt,
     faGraduationCap,
     faEye,
@@ -25,7 +22,7 @@ import {
     faTwitter,
     faTiktok,
     faWhatsapp,
-    faLinkedin  // ✅ AGREGAR ESTA LÍNEA
+    faLinkedin
 } from '@fortawesome/free-brands-svg-icons';
 
 import './css/NosotrosPage.css';
@@ -75,7 +72,7 @@ function NosotrosPage() {
     const valores = [
         {
             icono: faHeart,
-            titulo: "Pasiónde la comunidad",
+            titulo: "Pasión por la Comunidad",
             descripcion: "Creemos en el poder transformador del fitness y nos apasiona ayudar a cada miembro a alcanzar su máximo potencial."
         },
         {
@@ -104,11 +101,11 @@ function NosotrosPage() {
     ];
 
     return (
-        <div className="nosotros-page">
+        <div className="ares-nosotros-page">
             {/* Hero Section */}
-            <section className="hero-nosotros">
-                <div className="hero-overlay">
-                    <div className="hero-content">
+            <section className="ares-hero-nosotros">
+                <div className="ares-hero-overlay">
+                    <div className="ares-hero-content">
                         <h1>MÁS QUE UN GIMNASIO, UNA FAMILIA</h1>
                         <p>Descubre la historia, valores y equipo detrás de AresFitness</p>
                     </div>
@@ -116,15 +113,15 @@ function NosotrosPage() {
             </section>
 
             {/* Historia Section */}
-            <section className="historia-section">
-                <div className="container">
-                    <div className="section-title">
+            <section className="ares-historia-section">
+                <div className="ares-container">
+                    <div className="ares-section-title">
                         <h2>NUESTRA HISTORIA</h2>
-                        <div className="title-line"></div>
+                        <div className="ares-title-line"></div>
                     </div>
 
-                    <div className="historia-content">
-                        <div className="historia-text">
+                    <div className="ares-historia-content">
+                        <div className="ares-historia-text">
                             <h3>De una visión a una realidad transformadora</h3>
                             <p>
                                 Fundado en <strong>2020</strong>, AresFitness nació de una simple pero poderosa visión:
@@ -137,16 +134,16 @@ function NosotrosPage() {
                                 fitness de referencia con <strong>más de 5,000 miembros</strong> que han confiado
                                 en nosotros para su journey fitness.
                             </p>
-                            <div className="historia-logros">
+                            <div className="ares-historia-logros">
                                 {logros.map((logro, index) => (
-                                    <div key={index} className="logro-item">
-                                        <span className="logro-numero">{logro.numero}</span>
-                                        <span className="logro-texto">{logro.texto}</span>
+                                    <div key={index} className="ares-logro-item">
+                                        <span className="ares-logro-numero">{logro.numero}</span>
+                                        <span className="ares-logro-texto">{logro.texto}</span>
                                     </div>
                                 ))}
                             </div>
                         </div>
-                        <div className="historia-imagen">
+                        <div className="ares-historia-imagen">
                             <img
                                 src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=600&h=700&fit=crop"
                                 alt="Historia de AresFitness"
@@ -157,11 +154,11 @@ function NosotrosPage() {
             </section>
 
             {/* Misión Visión Section */}
-            <section className="mision-vision-section">
-                <div className="container">
-                    <div className="mision-vision-grid">
-                        <div className="mision-card">
-                            <div className="card-icon">
+            <section className="ares-mision-vision-section">
+                <div className="ares-container">
+                    <div className="ares-mision-vision-grid">
+                        <div className="ares-mision-card">
+                            <div className="ares-card-icon">
                                 <FontAwesomeIcon icon={faTrophy} />
                             </div>
                             <h3>Nuestra Misión</h3>
@@ -172,8 +169,8 @@ function NosotrosPage() {
                             </p>
                         </div>
 
-                        <div className="vision-card">
-                            <div className="card-icon">
+                        <div className="ares-vision-card">
+                            <div className="ares-card-icon">
                                 <FontAwesomeIcon icon={faEye} />
                             </div>
                             <h3>Nuestra Visión</h3>
@@ -188,18 +185,18 @@ function NosotrosPage() {
             </section>
 
             {/* Valores Section */}
-            <section className="valores-section">
-                <div className="container">
-                    <div className="section-title">
+            <section className="ares-valores-section">
+                <div className="ares-container">
+                    <div className="ares-section-title">
                         <h2>NUESTROS VALORES</h2>
-                        <div className="title-line"></div>
+                        <div className="ares-title-line"></div>
                         <p>Los principios que guían cada decisión y acción en AresFitness</p>
                     </div>
 
-                    <div className="valores-grid">
+                    <div className="ares-valores-grid">
                         {valores.map((valor, index) => (
-                            <div key={index} className="valor-card">
-                                <div className="valor-icon">
+                            <div key={index} className="ares-valor-card">
+                                <div className="ares-valor-icon">
                                     <FontAwesomeIcon icon={valor.icono} />
                                 </div>
                                 <h4>{valor.titulo}</h4>
@@ -211,21 +208,21 @@ function NosotrosPage() {
             </section>
 
             {/* Equipo Section */}
-            <section className="equipo-section">
-                <div className="container">
-                    <div className="section-title">
+            <section className="ares-equipo-section">
+                <div className="ares-container">
+                    <div className="ares-section-title">
                         <h2>NUESTRO EQUIPO</h2>
-                        <div className="title-line"></div>
+                        <div className="ares-title-line"></div>
                         <p>Conoce a los profesionales apasionados que harán de tu journey una experiencia única</p>
                     </div>
 
-                    <div className="equipo-grid">
+                    <div className="ares-equipo-grid">
                         {equipo.map((miembro) => (
-                            <div key={miembro.id} className="miembro-card">
-                                <div className="miembro-imagen">
+                            <div key={miembro.id} className="ares-miembro-card">
+                                <div className="ares-miembro-imagen">
                                     <img src={miembro.imagen} alt={miembro.nombre} />
-                                    <div className="miembro-overlay">
-                                        <div className="redes-sociales">
+                                    <div className="ares-miembro-overlay">
+                                        <div className="ares-redes-sociales">
                                             <a href={miembro.redes.instagram} aria-label="Instagram">
                                                 <FontAwesomeIcon icon={faInstagram} />
                                             </a>
@@ -235,15 +232,15 @@ function NosotrosPage() {
                                         </div>
                                     </div>
                                 </div>
-                                <div className="miembro-info">
+                                <div className="ares-miembro-info">
                                     <h4>{miembro.nombre}</h4>
-                                    <p className="miembro-puesto">{miembro.puesto}</p>
-                                    <div className="miembro-datos">
-                                        <span className="experiencia">
+                                    <p className="ares-miembro-puesto">{miembro.puesto}</p>
+                                    <div className="ares-miembro-datos">
+                                        <span className="ares-experiencia">
                                             <FontAwesomeIcon icon={faCalendarAlt} />
                                             {miembro.experiencia}
                                         </span>
-                                        <span className="especialidad">
+                                        <span className="ares-especialidad">
                                             <FontAwesomeIcon icon={faGraduationCap} />
                                             {miembro.especialidad}
                                         </span>
@@ -256,43 +253,43 @@ function NosotrosPage() {
             </section>
 
             {/* Instalaciones Section */}
-            <section className="instalaciones-section">
-                <div className="container">
-                    <div className="section-title">
+            <section className="ares-instalaciones-section">
+                <div className="ares-container">
+                    <div className="ares-section-title">
                         <h2>NUESTRAS INSTALACIONES</h2>
-                        <div className="title-line"></div>
+                        <div className="ares-title-line"></div>
                         <p>Espacios diseñados para optimizar tu experiencia fitness</p>
                     </div>
 
-                    <div className="instalaciones-grid">
-                        <div className="instalacion-card">
+                    <div className="ares-instalaciones-grid">
+                        <div className="ares-instalacion-card">
                             <img
                                 src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=300&fit=crop"
                                 alt="Zona de Musculación"
                             />
-                            <div className="instalacion-info">
+                            <div className="ares-instalacion-info">
                                 <h4>Zona de Musculación</h4>
                                 <p>Equipos de última generación para entrenamiento de fuerza</p>
                             </div>
                         </div>
 
-                        <div className="instalacion-card">
+                        <div className="ares-instalacion-card">
                             <img
                                 src="https://images.unsplash.com/photo-1574680178050-55c6a6a96e0a?w=400&h=300&fit=crop"
                                 alt="Área Cardio"
                             />
-                            <div className="instalacion-info">
+                            <div className="ares-instalacion-info">
                                 <h4>Área Cardio</h4>
                                 <p>Máquinas cardiovasculares con tecnología de punta</p>
                             </div>
                         </div>
 
-                        <div className="instalacion-card">
+                        <div className="ares-instalacion-card">
                             <img
                                 src="https://images.unsplash.com/photo-1549060279-7e168faa7091?w=400&h=300&fit=crop"
                                 alt="Estudio de Clases"
                             />
-                            <div className="instalacion-info">
+                            <div className="ares-instalacion-info">
                                 <h4>Estudio de Clases</h4>
                                 <p>Espacio dedicado para clases grupales y funcionales</p>
                             </div>
@@ -300,22 +297,18 @@ function NosotrosPage() {
                     </div>
                 </div>
             </section>
-            <section className="comentarios-nosotros">
-                <ComentariosSection />
-            </section>
-
 
             {/* CTA Section */}
-            <section className="cta-nosotros">
-                <div className="container">
-                    <div className="cta-content">
+            <section className="ares-cta-nosotros">
+                <div className="ares-container">
+                    <div className="ares-cta-content">
                         <h2>¿LISTO PARA UNIRTE A NUESTRA FAMILIA?</h2>
                         <p>Comienza tu transformación hoy mismo con una sesión gratuita</p>
-                        <div className="cta-buttons">
-                            <Link to="/registro" className="btn-cta-primary">
+                        <div className="ares-cta-buttons">
+                            <Link to="/registro" className="ares-btn-cta-primary">
                                 <FontAwesomeIcon icon={faUserPlus} /> COMENZAR AHORA
                             </Link>
-                            <Link to="/planes" className="btn-cta-secondary">
+                            <Link to="/planes" className="ares-btn-cta-secondary">
                                 <FontAwesomeIcon icon={faCrown} /> VER PLANES
                             </Link>
                         </div>
@@ -324,16 +317,16 @@ function NosotrosPage() {
             </section>
 
             {/* Footer */}
-            <footer className="main-footer">
-                <div className="footer-container">
-                    <div className="footer-section">
-                        <div className="logo-footer">
+            <footer className="ares-main-footer">
+                <div className="ares-footer-container">
+                    <div className="ares-footer-section">
+                        <div className="ares-logo-footer">
                             <Link to="/">
                                 <img src={logo} alt="Logo AresFitness" />
                             </Link>
                         </div>
                         <p>Transformando vidas a través del fitness desde 2020</p>
-                        <div className="footer-social">
+                        <div className="ares-footer-social">
                             <a href="#" aria-label="Facebook">
                                 <FontAwesomeIcon icon={faFacebookF} />
                             </a>
@@ -349,7 +342,7 @@ function NosotrosPage() {
                         </div>
                     </div>
 
-                    <div className="footer-section">
+                    <div className="ares-footer-section">
                         <h3>Enlaces rápidos</h3>
                         <ul>
                             <li><Link to="/">Inicio</Link></li>
@@ -359,14 +352,14 @@ function NosotrosPage() {
                         </ul>
                     </div>
 
-                    <div className="footer-section">
+                    <div className="ares-footer-section">
                         <h3>Contacto</h3>
                         <p><FontAwesomeIcon icon={faMapMarkerAlt} /> Av. Principal 123, Lima, Perú</p>
                         <p><FontAwesomeIcon icon={faPhone} /> (01) 123-4567</p>
                         <p><FontAwesomeIcon icon={faWhatsapp} /> +51 987 654 321</p>
                     </div>
 
-                    <div className="footer-section">
+                    <div className="ares-footer-section">
                         <h3>Horario de atención</h3>
                         <p>Lunes a Viernes: 5:00 am - 11:00 pm</p>
                         <p>Sábados: 6:00 am - 10:00 pm</p>
@@ -374,7 +367,7 @@ function NosotrosPage() {
                     </div>
                 </div>
 
-                <div className="footer-bottom">
+                <div className="ares-footer-bottom">
                     <p>&copy; 2025 AresFitness. Todos los derechos reservados.</p>
                 </div>
             </footer>
