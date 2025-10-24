@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { loginUsuario } from '../services/usuarioService.js';
 import { useNavigate, Link } from 'react-router-dom';
-import './LoginPage.css';
+import './css/LoginPage.css';
 import logo from "../assets/Imagenes/logo.png";
 import icono from "../assets/Imagenes/usuario.png";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -51,11 +51,7 @@ function LoginPage() {
 
  return (
     <div className="login-page">
-      {/* Logo Section */}
-      <div className="logo-container">
-        <img src={logo} alt="AresFitness Logo" />
-      </div>
-
+  
       {/* Main Content */}
       <div className="main-wrapper">
         <div className="container">

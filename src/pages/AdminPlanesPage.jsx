@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { listarPlanes, crearPlan, actualizarPlan, eliminarPlan } from '../services/membresiaService';
-import './AdminPlanesPage.css';
+import './css/AdminPlanesPage.css';
 
 function AdminPlanesPage() {
     const [planes, setPlanes] = useState([]);

@@ -30,7 +30,7 @@ import {
     faTiktok,
     faWhatsapp
 } from '@fortawesome/free-brands-svg-icons';
-import './EjerciciosPage.css';
+import './css/EjerciciosPage.css';
 
 function EjerciciosPage() {
     const [categoriaActiva, setCategoriaActiva] = useState('todos');

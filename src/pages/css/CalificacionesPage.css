@@ -1,0 +1,258 @@
+.calificaciones-page {
+    background: #000;
+    color: #fff;
+    min-height: 100vh;
+    padding: 100px 20px 50px;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.header h1 {
+    color: #ffd500;
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+}
+
+.header p {
+    color: #7f7676;
+    font-size: 1.1rem;
+}
+
+/* Resumen Calificaciones */
+.resumen-calificaciones {
+    max-width: 800px;
+    margin: 0 auto 40px;
+    text-align: center;
+}
+
+.promedio {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 213, 0, 0.2);
+    border-radius: 15px;
+    padding: 30px;
+}
+
+.puntuacion {
+    font-size: 3rem;
+    color: #ffd500;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.estrellas {
+    margin-bottom: 10px;
+}
+
+.star {
+    color: #7f7676;
+    margin: 0 2px;
+}
+
+.star.filled, .star.half {
+    color: #ffd500;
+}
+
+.total-opiniones {
+    color: #7f7676;
+}
+
+/* Formulario Opinión */
+.form-opinion {
+    max-width: 800px;
+    margin: 0 auto 40px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 213, 0, 0.2);
+    border-radius: 15px;
+    padding: 30px;
+}
+
+.form-opinion h3 {
+    color: #ffd500;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.calificacion-input {
+    margin-bottom: 20px;
+}
+
+.calificacion-input label {
+    display: block;
+    margin-bottom: 10px;
+    color: #ffd500;
+    font-weight: bold;
+}
+
+.estrellas-seleccion {
+    display: flex;
+    gap: 5px;
+}
+
+.estrellas-seleccion .star {
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.estrellas-seleccion .star.filled {
+    color: #ffd500;
+}
+
+.estrellas-seleccion .star:hover {
+    color: #ffd500;
+}
+
+.comentario-input {
+    margin-bottom: 20px;
+}
+
+.comentario-input label {
+    display: block;
+    margin-bottom: 10px;
+    color: #ffd500;
+    font-weight: bold;
+}
+
+.comentario-input textarea {
+    width: 100%;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 213, 0, 0.2);
+    border-radius: 8px;
+    color: white;
+    resize: vertical;
+    font-family: inherit;
+}
+
+.comentario-input textarea:focus {
+    outline: none;
+    border-color: #ffd500;
+}
+
+.form-opinion button {
+    background: linear-gradient(135deg, #ffd500, #ff9900);
+    color: #2c2c2c;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: bold;
+    margin: 0 auto;
+    transition: all 0.3s ease;
+}
+
+.form-opinion button:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 213, 0, 0.3);
+}
+
+.form-opinion button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Lista de Opiniones */
+.lista-opiniones {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.lista-opiniones h3 {
+    color: #ffd500;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.opinion-item {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 213, 0, 0.2);
+    border-radius: 15px;
+    padding: 25px;
+    margin-bottom: 20px;
+    transition: all 0.3s ease;
+}
+
+.opinion-item:hover {
+    transform: translateY(-3px);
+    border-color: rgba(255, 213, 0, 0.4);
+}
+
+.opinion-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.usuario-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #ffd500;
+    font-weight: bold;
+}
+
+.calificacion {
+    display: flex;
+    gap: 2px;
+}
+
+.comentario {
+    color: #ccc;
+    line-height: 1.6;
+    margin-bottom: 15px;
+}
+
+.opinion-footer {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #7f7676;
+    font-size: 0.9rem;
+}
+
+.no-opiniones {
+    text-align: center;
+    color: #7f7676;
+    padding: 40px 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 15px;
+    border: 1px solid rgba(255, 213, 0, 0.2);
+}
+
+.loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50vh;
+    color: #ffd500;
+    font-size: 1.2rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .calificaciones-page {
+        padding: 80px 15px 30px;
+    }
+    
+    .header h1 {
+        font-size: 2rem;
+    }
+    
+    .opinion-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .form-opinion, .opinion-item {
+        padding: 20px;
+    }
+}

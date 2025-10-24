@@ -1,0 +1,366 @@
+.admin-asistencias-page {
+    background-color: #000;
+    color: #fff;
+    min-height: 100vh;
+    padding-top: 80px;
+}
+
+/* Hero Section */
+.hero-asistencias {
+    height: 30vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+                url('/assets/Imagenes/asistencias-hero.jpg') no-repeat center center/cover;
+}
+
+.hero-overlay {
+    text-align: center;
+    color: white;
+}
+
+.hero-content h1 {
+    font-size: 2.5rem;
+    font-family: 'Anton', sans-serif;
+    margin-bottom: 15px;
+    background: linear-gradient(45deg, #ffd500, #ff6b00);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.hero-content p {
+    font-size: 1.1rem;
+    color: #ffd500;
+}
+
+/* Stats Section */
+.stats-asistencias {
+    padding: 40px 20px;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.stats-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.stat-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 213, 0, 0.2);
+    border-radius: 15px;
+    padding: 25px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(255, 213, 0, 0.4);
+}
+
+.stat-icon {
+    font-size: 2.5rem;
+    color: #ffd500;
+}
+
+.stat-content h3 {
+    font-size: 2rem;
+    color: #ffd500;
+    margin: 0;
+    font-family: 'Anton', sans-serif;
+}
+
+.stat-content p {
+    color: #7f7676;
+    margin: 5px 0 0 0;
+}
+
+/* Herramientas Section */
+.herramientas-section {
+    background: rgba(15, 14, 13, 0.95);
+    padding: 25px 20px;
+    border-bottom: 1px solid rgba(255, 213, 0, 0.1);
+}
+
+.herramientas-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.search-bar {
+    position: relative;
+    flex: 1;
+    min-width: 250px;
+}
+
+.search-icon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #7f7676;
+}
+
+.search-input {
+    width: 100%;
+    padding: 10px 15px 10px 40px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 213, 0, 0.2);
+    border-radius: 8px;
+    color: white;
+}
+
+.herramientas-derecha {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.filtro-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.filtro-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 213, 0, 0.2);
+    border-radius: 20px;
+    padding: 6px 12px;
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.8rem;
+}
+
+.filtro-btn.active {
+    background: linear-gradient(135deg, #ffd500, #ff9900);
+    color: #2c2c2c;
+}
+
+.acciones-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.btn-recargar {
+    background: transparent;
+    color: #ffd500;
+    border: 1px solid #ffd500;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+/* Registro Rápido */
+.registro-rapido {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: rgba(255, 213, 0, 0.1);
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 213, 0, 0.2);
+}
+
+.registro-rapido h3 {
+    color: #ffd500;
+    margin-bottom: 15px;
+}
+
+.registro-form {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.registro-form input {
+    padding: 10px 15px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 213, 0, 0.2);
+    border-radius: 6px;
+    color: white;
+    min-width: 200px;
+}
+
+.btn-nuevo {
+    background: linear-gradient(135deg, #ffd500, #ff9900);
+    color: #2c2c2c;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-weight: bold;
+}
+
+/* Tabla Section */
+.tabla-section {
+    padding: 40px 20px;
+}
+
+.section-title {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.section-title h2 {
+    color: #ffd500;
+    font-size: 2rem;
+    font-family: 'Anton', sans-serif;
+    margin-bottom: 10px;
+}
+
+.title-line {
+    width: 60px;
+    height: 3px;
+    background: #ffd500;
+    margin: 0 auto 15px;
+}
+
+.section-title p {
+    color: #7f7676;
+}
+
+.tabla-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 213, 0, 0.2);
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+.tabla-responsive {
+    overflow-x: auto;
+}
+
+.tabla-asistencias {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 800px;
+}
+
+.tabla-asistencias th {
+    background: rgba(255, 213, 0, 0.1);
+    color: #ffd500;
+    padding: 15px 12px;
+    text-align: left;
+    font-weight: bold;
+}
+
+.tabla-asistencias td {
+    padding: 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.fila-asistencia:hover {
+    background: rgba(255, 213, 0, 0.05);
+}
+
+.celda-usuario .usuario-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.usuario-nombre {
+    font-weight: bold;
+}
+
+.usuario-id {
+    font-size: 0.8rem;
+    color: #7f7676;
+}
+
+.celda-fecha, .celda-hora {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.badge-estado {
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+/* No Resultados */
+.no-resultados {
+    padding: 40px 20px;
+    text-align: center;
+    color: #7f7676;
+}
+
+.no-resultados svg {
+    color: #ffd500;
+    margin-bottom: 15px;
+}
+
+/* Loading */
+.admin-asistencias-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background: #000;
+}
+
+.loading-spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid rgba(255, 213, 0, 0.3);
+    border-top: 4px solid #ffd500;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 20px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .herramientas-container {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .registro-form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .hero-content h1 {
+        font-size: 2rem;
+    }
+}

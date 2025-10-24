@@ -44,7 +44,7 @@ import {
     faTiktok,
     faWhatsapp
 } from '@fortawesome/free-brands-svg-icons';
-import './AdminSuscripcionesPage.css';
+import './css/AdminSuscripcionesPage.css';
 
 function AdminSuscripcionesPage() {
     const [suscripciones, setSuscripciones] = useState([]);

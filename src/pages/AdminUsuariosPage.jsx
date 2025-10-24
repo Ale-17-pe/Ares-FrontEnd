@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { listarUsuarios } from '../services/usuarioService';
-import { Link } from 'react-router-dom';
+import { listarUsuarios, eliminarUsuario } from '../services/usuarioService';
+import { Link, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import logo from '../assets/Imagenes/logo.png';
 import {
     faMapMarkerAlt,
     faRunning,
@@ -26,16 +27,11 @@ import {
     faSync,
     faSort,
     faSortUp,
-    faSortDown
+    faSortDown,
+    faTimes
 } from '@fortawesome/free-solid-svg-icons';
-import {
-    faFacebookF,
-    faInstagram,
-    faTwitter,
-    faTiktok,
-    faWhatsapp
-} from '@fortawesome/free-brands-svg-icons';
-import './AdminUsuariosPage.css';
+
+import './css/AdminUsuariosPage.css';
 
 function AdminUsuariosPage() {
     const [usuarios, setUsuarios] = useState([]);
@@ -44,6 +40,22 @@ function AdminUsuariosPage() {
     const [filtroActivo, setFiltroActivo] = useState('todos');
     const [orden, setOrden] = useState({ campo: 'nombre', direccion: 'asc' });
     const [usuarioSeleccionado, setUsuarioSeleccionado] = useState(null);
+    const [modalNuevoUsuario, setModalNuevoUsuario] = useState(false);
+    const navigate = useNavigate();
+
+    // Estado para nuevo usuario
+    const [nuevoUsuario, setNuevoUsuario] = useState({
+        nombre: '',
+        apellido: '',
+        email: '',
+        telefono: '',
+        direccion: '',
+        fechaNacimiento: '',
+        genero: 'Masculino',
+        rol: 'CLIENTE',
+        membresia: 'Básica',
+        estado: 'Activo'
+    });
 
     // Datos de ejemplo como fallback
     const usuariosEjemplo = [
@@ -53,10 +65,13 @@ function AdminUsuariosPage() {
             apellido: "Pérez",
             email: "juan.perez@email.com",
             telefono: "+51 987 654 321",
+            direccion: "Av. Principal 123",
+            fechaNacimiento: "1990-05-15",
             fechaRegistro: "2024-01-15",
             membresia: "Premium",
             estado: "Activo",
             genero: "Masculino",
+            rol: "CLIENTE",
             ultimaVisita: "2024-12-19"
         },
         {
@@ -65,10 +80,13 @@ function AdminUsuariosPage() {
             apellido: "García",
             email: "maria.garcia@email.com",
             telefono: "+51 987 654 322",
+            direccion: "Calle Secundaria 456",
+            fechaNacimiento: "1992-08-20",
             fechaRegistro: "2024-02-20",
             membresia: "VIP",
             estado: "Activo",
             genero: "Femenino",
+            rol: "CLIENTE",
             ultimaVisita: "2024-12-18"
         },
         {
@@ -77,10 +95,13 @@ function AdminUsuariosPage() {
             apellido: "López",
             email: "carlos.lopez@email.com",
             telefono: "+51 987 654 323",
+            direccion: "Jr. Los Olivos 789",
+            fechaNacimiento: "1985-03-10",
             fechaRegistro: "2024-03-10",
             membresia: "Básica",
             estado: "Inactivo",
             genero: "Masculino",
+            rol: "CLIENTE",
             ultimaVisita: "2024-11-15"
         },
         {
@@ -89,34 +110,13 @@ function AdminUsuariosPage() {
             apellido: "Rodríguez",
             email: "ana.rodriguez@email.com",
             telefono: "+51 987 654 324",
+            direccion: "Av. Libertad 321",
+            fechaNacimiento: "1988-11-05",
             fechaRegistro: "2024-04-05",
             membresia: "Premium",
             estado: "Activo",
             genero: "Femenino",
-            ultimaVisita: "2024-12-19"
-        },
-        {
-            id: 5,
-            nombre: "Luis",
-            apellido: "Martínez",
-            email: "luis.martinez@email.com",
-            telefono: "+51 987 654 325",
-            fechaRegistro: "2024-05-12",
-            membresia: "Básica",
-            estado: "Activo",
-            genero: "Masculino",
-            ultimaVisita: "2024-12-17"
-        },
-        {
-            id: 6,
-            nombre: "Sofia",
-            apellido: "Hernández",
-            email: "sofia.hernandez@email.com",
-            telefono: "+51 987 654 326",
-            fechaRegistro: "2024-06-08",
-            membresia: "VIP",
-            estado: "Activo",
-            genero: "Femenino",
+            rol: "RECEPCIONISTA",
             ultimaVisita: "2024-12-19"
         }
     ];
@@ -127,17 +127,19 @@ function AdminUsuariosPage() {
                 setLoading(true);
                 const data = await listarUsuarios();
                 if (data && data.length > 0) {
-                    // Formatear los datos de la API
                     const usuariosFormateados = data.map(usuario => ({
                         id: usuario.id,
                         nombre: usuario.nombre || 'Usuario',
                         apellido: usuario.apellido || '',
                         email: usuario.email,
                         telefono: usuario.telefono || '+51 XXX XXX XXX',
+                        direccion: usuario.direccion || '',
+                        fechaNacimiento: usuario.fechaNacimiento || '',
                         fechaRegistro: usuario.fechaRegistro || new Date().toISOString().split('T')[0],
-                        membresia: usuario.membresia || 'Básica',
-                        estado: usuario.estado || 'Activo',
                         genero: usuario.genero || 'No especificado',
+                        membresia: usuario.membresia || 'Básica',
+                        estado: usuario.activo ? 'Activo' : 'Inactivo',
+                        rol: usuario.role || 'CLIENTE',
                         ultimaVisita: usuario.ultimaVisita || new Date().toISOString().split('T')[0]
                     }));
                     setUsuarios(usuariosFormateados);
@@ -157,17 +159,20 @@ function AdminUsuariosPage() {
     // Filtrar y ordenar usuarios
     const usuariosFiltrados = usuarios
         .filter(usuario => {
-            const coincideBusqueda = 
+            const coincideBusqueda =
                 usuario.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
                 usuario.apellido.toLowerCase().includes(busqueda.toLowerCase()) ||
                 usuario.email.toLowerCase().includes(busqueda.toLowerCase());
-            
-            const coincideFiltro = filtroActivo === 'todos' || 
-                                (filtroActivo === 'activos' && usuario.estado === 'Activo') ||
-                                (filtroActivo === 'inactivos' && usuario.estado === 'Inactivo') ||
-                                (filtroActivo === 'premium' && usuario.membresia === 'Premium') ||
-                                (filtroActivo === 'vip' && usuario.membresia === 'VIP') ||
-                                (filtroActivo === 'basica' && usuario.membresia === 'Básica');
+
+            const coincideFiltro = 
+                filtroActivo === 'todos' ||
+                (filtroActivo === 'activos' && usuario.estado === 'Activo') ||
+                (filtroActivo === 'inactivos' && usuario.estado === 'Inactivo') ||
+                (filtroActivo === 'premium' && usuario.membresia === 'Premium') ||
+                (filtroActivo === 'vip' && usuario.membresia === 'VIP') ||
+                (filtroActivo === 'basica' && usuario.membresia === 'Básica') ||
+                (filtroActivo === 'cliente' && usuario.rol === 'CLIENTE') ||
+                (filtroActivo === 'recepcionista' && usuario.rol === 'RECEPCIONISTA');
 
             return coincideBusqueda && coincideFiltro;
         })
@@ -175,7 +180,7 @@ function AdminUsuariosPage() {
             const campo = orden.campo;
             const valorA = a[campo]?.toString().toLowerCase() || '';
             const valorB = b[campo]?.toString().toLowerCase() || '';
-            
+
             if (orden.direccion === 'asc') {
                 return valorA.localeCompare(valorB);
             } else {
@@ -204,6 +209,7 @@ function AdminUsuariosPage() {
     };
 
     const formatearFecha = (fecha) => {
+        if (!fecha) return 'No especificado';
         return new Date(fecha).toLocaleDateString('es-ES', {
             year: 'numeric',
             month: 'short',
@@ -217,11 +223,11 @@ function AdminUsuariosPage() {
 
     const getMembresiaColor = (membresia) => {
         const colores = {
-            'Básica': '#7f7676',
-            'Premium': '#ffd500',
-            'VIP': '#ff6b6b'
+            'Básica': '#6c757d',
+            'Premium': '#ffc107',
+            'VIP': '#dc3545'
         };
-        return colores[membresia] || '#7f7676';
+        return colores[membresia] || '#6c757d';
     };
 
     const recargarUsuarios = async () => {
@@ -229,7 +235,22 @@ function AdminUsuariosPage() {
             setLoading(true);
             const data = await listarUsuarios();
             if (data && data.length > 0) {
-                setUsuarios(data);
+                const usuariosFormateados = data.map(usuario => ({
+                    id: usuario.id,
+                    nombre: usuario.nombre || 'Usuario',
+                    apellido: usuario.apellido || '',
+                    email: usuario.email,
+                    telefono: usuario.telefono || '+51 XXX XXX XXX',
+                    direccion: usuario.direccion || '',
+                    fechaNacimiento: usuario.fechaNacimiento || '',
+                    fechaRegistro: usuario.fechaRegistro || new Date().toISOString().split('T')[0],
+                    genero: usuario.genero || 'No especificado',
+                    membresia: usuario.membresia || 'Básica',
+                    estado: usuario.activo ? 'Activo' : 'Inactivo',
+                    rol: usuario.role || 'CLIENTE',
+                    ultimaVisita: usuario.ultimaVisita || new Date().toISOString().split('T')[0]
+                }));
+                setUsuarios(usuariosFormateados);
             }
         } catch (error) {
             console.error("Error al recargar usuarios:", error);
@@ -238,11 +259,63 @@ function AdminUsuariosPage() {
         }
     };
 
+    const handleEliminar = async (id) => {
+        if (!window.confirm("¿Estás seguro de eliminar este usuario?")) return;
+        try {
+            await eliminarUsuario(id);
+            setUsuarios(prev => prev.filter(u => u.id !== id));
+        } catch (error) {
+            console.error("Error al eliminar usuario:", error);
+            alert("Error al eliminar usuario");
+        }
+    };
+
+    const handleNuevoUsuarioChange = (e) => {
+        const { name, value } = e.target;
+        setNuevoUsuario(prev => ({ ...prev, [name]: value }));
+    };
+
+    const handleCrearUsuario = async (e) => {
+        e.preventDefault();
+        try {
+            // En un entorno real, aquí llamarías a tu API
+            const usuarioCreado = {
+                id: Math.max(...usuarios.map(u => u.id)) + 1,
+                ...nuevoUsuario,
+                fechaRegistro: new Date().toISOString().split('T')[0],
+                ultimaVisita: new Date().toISOString().split('T')[0]
+            };
+            
+            setUsuarios(prev => [...prev, usuarioCreado]);
+            setModalNuevoUsuario(false);
+            setNuevoUsuario({
+                nombre: '', 
+                apellido: '', 
+                email: '', 
+                telefono: '', 
+                direccion: '',
+                fechaNacimiento: '', 
+                genero: 'Masculino', 
+                rol: 'CLIENTE', 
+                membresia: 'Básica', 
+                estado: 'Activo'
+            });
+            alert("Usuario creado exitosamente");
+        } catch (error) {
+            console.error("Error al crear usuario:", error);
+            alert("Error al crear usuario");
+        }
+    };
+
+    const handleEditarUsuario = (id) => {
+        navigate(`/admin/usuarios/editar/${id}`);
+    };
+
     if (loading) {
         return (
             <div className="admin-usuarios-loading">
                 <div className="loading-spinner"></div>
-                <p>Cargando clientes...</p>
+                <p>Cargando Usuarios...</p>
             </div>
         );
     }
@@ -250,41 +323,13 @@ function AdminUsuariosPage() {
     return (
         <div className="admin-usuarios-page">
             {/* Header */}
-            <header className="main-header">
-                <div className="header-container">
-                    <div className="logo-container">
-                        <Link to="/">
-                            <img src="/assets/Imagenes/logo.png" alt="Logo AresFitness" />
-                        </Link>
-                    </div>
-                    <nav className="main-nav">
-                        <ul>
-                            <li><Link to="/ubicacion"><FontAwesomeIcon icon={faMapMarkerAlt} /> UBICACIÓN</Link></li>
-                            <li><Link to="/ejercicios"><FontAwesomeIcon icon={faRunning} /> EJERCICIOS</Link></li>
-                            <li><Link to="/membresias"><FontAwesomeIcon icon={faCrown} /> MEMBRESÍAS</Link></li>
-                        </ul>
-                    </nav>
-                    <div className="header-actions">
-                        <button className="user-btn">
-                            <FontAwesomeIcon icon={faUser} /> Mi Cuenta
-                        </button>
-                        <div className="auth-dropdown">
-                            <Link to="/login">
-                                <FontAwesomeIcon icon={faSignInAlt} /> Iniciar Sesión
-                            </Link>
-                            <Link to="/registro">
-                                <FontAwesomeIcon icon={faUserPlus} /> Registrarse
-                            </Link>
-                        </div>
-                    </div>
-                </div>
-            </header>
+    
 
             {/* Hero Section */}
             <section className="hero-admin">
                 <div className="hero-overlay">
                     <div className="hero-content">
-                        <h1>PANEL DE CLIENTES</h1>
+                        <h1>PANEL DE USUARIOS</h1>
                         <p>Gestiona y administra todos los miembros de AresFitness</p>
                     </div>
                 </div>
@@ -297,14 +342,14 @@ function AdminUsuariosPage() {
                         <FontAwesomeIcon icon={faUsers} className="stat-icon" />
                         <div className="stat-content">
                             <h3>{usuarios.length}</h3>
-                            <p>Total Clientes</p>
+                            <p>Total Usuarios</p>
                         </div>
                     </div>
                     <div className="stat-card">
                         <FontAwesomeIcon icon={faDumbbell} className="stat-icon" />
                         <div className="stat-content">
                             <h3>{usuarios.filter(u => u.estado === 'Activo').length}</h3>
-                            <p>Clientes Activos</p>
+                            <p>Usuarios Activos</p>
                         </div>
                     </div>
                     <div className="stat-card">
@@ -331,13 +376,13 @@ function AdminUsuariosPage() {
                         <FontAwesomeIcon icon={faSearch} className="search-icon" />
                         <input
                             type="text"
-                            placeholder="Buscar clientes por nombre, apellido o email..."
+                            placeholder="Buscar usuarios por nombre, apellido o email..."
                             value={busqueda}
                             onChange={(e) => setBusqueda(e.target.value)}
                             className="search-input"
                         />
                     </div>
-                    
+
                     <div className="herramientas-derecha">
                         <div className="filtro-buttons">
                             {[
@@ -346,7 +391,9 @@ function AdminUsuariosPage() {
                                 { id: 'inactivos', label: 'Inactivos', icon: faUser },
                                 { id: 'premium', label: 'Premium', icon: faCrown },
                                 { id: 'vip', label: 'VIP', icon: faMember },
-                                { id: 'basica', label: 'Básica', icon: faUser }
+                                { id: 'basica', label: 'Básica', icon: faUser },
+                                { id: 'cliente', label: 'Clientes', icon: faUser },
+                                { id: 'recepcionista', label: 'Recepcionistas', icon: faUser }
                             ].map(filtro => (
                                 <button
                                     key={filtro.id}
@@ -364,9 +411,12 @@ function AdminUsuariosPage() {
                                 <FontAwesomeIcon icon={faSync} />
                                 Recargar
                             </button>
-                            <button className="btn-nuevo">
+                            <button 
+                                className="btn-nuevo"
+                                onClick={() => setModalNuevoUsuario(true)}
+                            >
                                 <FontAwesomeIcon icon={faPlus} />
-                                Nuevo Cliente
+                                Nuevo Usuario
                             </button>
                         </div>
                     </div>
@@ -376,9 +426,9 @@ function AdminUsuariosPage() {
             {/* Tabla de Usuarios */}
             <section className="tabla-section">
                 <div className="section-title">
-                    <h2>LISTA DE CLIENTES</h2>
+                    <h2>LISTA DE USUARIOS</h2>
                     <div className="title-line"></div>
-                    <p>Gestiona la información de todos los miembros registrados</p>
+                    <p>Gestiona la información de todos los usuarios registrados</p>
                 </div>
 
                 <div className="tabla-container">
@@ -411,9 +461,9 @@ function AdminUsuariosPage() {
                                             <span>Estado</span>
                                             <FontAwesomeIcon icon={getIconoOrden('estado')} />
                                         </th>
-                                        <th onClick={() => handleOrdenar('fechaRegistro')}>
-                                            <span>Fecha Registro</span>
-                                            <FontAwesomeIcon icon={getIconoOrden('fechaRegistro')} />
+                                        <th onClick={() => handleOrdenar('rol')}>
+                                            <span>Rol</span>
+                                            <FontAwesomeIcon icon={getIconoOrden('rol')} />
                                         </th>
                                         <th>Acciones</th>
                                     </tr>
@@ -447,7 +497,7 @@ function AdminUsuariosPage() {
                                                 {usuario.telefono}
                                             </td>
                                             <td className="celda-membresia">
-                                                <span 
+                                                <span
                                                     className="badge-membresia"
                                                     style={{ backgroundColor: getMembresiaColor(usuario.membresia) }}
                                                 >
@@ -455,43 +505,40 @@ function AdminUsuariosPage() {
                                                 </span>
                                             </td>
                                             <td className="celda-estado">
-                                                <span 
+                                                <span
                                                     className="badge-estado"
                                                     style={{ backgroundColor: getEstadoColor(usuario.estado) }}
                                                 >
                                                     {usuario.estado}
                                                 </span>
                                             </td>
-                                            <td className="celda-fecha">
-                                                <FontAwesomeIcon icon={faCalendar} />
-                                                {formatearFecha(usuario.fechaRegistro)}
+                                            <td className="celda-rol">
+                                                <span className="badge-rol">
+                                                    {usuario.rol}
+                                                </span>
                                             </td>
                                             <td className="celda-acciones">
                                                 <div className="acciones-grid">
-                                                    <button 
+                                                    <button
                                                         className="btn-accion btn-ver"
                                                         onClick={() => abrirModalUsuario(usuario)}
                                                         title="Ver detalles"
                                                     >
                                                         <FontAwesomeIcon icon={faEye} />
                                                     </button>
-                                                    <button 
+                                                    <button
                                                         className="btn-accion btn-editar"
+                                                        onClick={() => handleEditarUsuario(usuario.id)}
                                                         title="Editar usuario"
                                                     >
                                                         <FontAwesomeIcon icon={faEdit} />
                                                     </button>
-                                                    <button 
+                                                    <button
                                                         className="btn-accion btn-eliminar"
+                                                        onClick={() => handleEliminar(usuario.id)}
                                                         title="Eliminar usuario"
                                                     >
                                                         <FontAwesomeIcon icon={faTrash} />
-                                                    </button>
-                                                    <button 
-                                                        className="btn-accion btn-email"
-                                                        title="Enviar email"
-                                                    >
-                                                        <FontAwesomeIcon icon={faEnvelope} />
                                                     </button>
                                                 </div>
                                             </td>
@@ -503,7 +550,7 @@ function AdminUsuariosPage() {
                     ) : (
                         <div className="no-resultados">
                             <FontAwesomeIcon icon={faSearch} size="3x" />
-                            <h3>No se encontraron clientes</h3>
+                            <h3>No se encontraron usuarios</h3>
                             <p>Intenta con otros términos de búsqueda o selecciona otro filtro</p>
                         </div>
                     )}
@@ -512,17 +559,17 @@ function AdminUsuariosPage() {
                 {/* Resumen */}
                 <div className="resumen-tabla">
                     <p>
-                        Mostrando <strong>{usuariosFiltrados.length}</strong> de <strong>{usuarios.length}</strong> clientes
+                        Mostrando <strong>{usuariosFiltrados.length}</strong> de <strong>{usuarios.length}</strong> usuarios
                     </p>
                 </div>
             </section>
 
-            {/* Modal de Detalles */}
+            {/* Modal de Detalles de Usuario */}
             {usuarioSeleccionado && (
                 <div className="modal-overlay" onClick={cerrarModal}>
                     <div className="modal-content" onClick={(e) => e.stopPropagation()}>
                         <button className="modal-close" onClick={cerrarModal}>×</button>
-                        
+
                         <div className="modal-header">
                             <div className="usuario-avatar-large">
                                 {usuarioSeleccionado.nombre.charAt(0)}{usuarioSeleccionado.apellido.charAt(0)}
@@ -531,18 +578,21 @@ function AdminUsuariosPage() {
                                 <h2>{usuarioSeleccionado.nombre} {usuarioSeleccionado.apellido}</h2>
                                 <p className="usuario-email">{usuarioSeleccionado.email}</p>
                                 <div className="badges-container">
-                                    <div 
+                                    <span
                                         className="estado-badge"
                                         style={{ backgroundColor: getEstadoColor(usuarioSeleccionado.estado) }}
                                     >
                                         {usuarioSeleccionado.estado}
-                                    </div>
-                                    <div 
+                                    </span>
+                                    <span
                                         className="membresia-badge"
                                         style={{ backgroundColor: getMembresiaColor(usuarioSeleccionado.membresia) }}
                                     >
                                         {usuarioSeleccionado.membresia}
-                                    </div>
+                                    </span>
+                                    <span className="rol-badge">
+                                        {usuarioSeleccionado.rol}
+                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -563,6 +613,10 @@ function AdminUsuariosPage() {
                                         <FontAwesomeIcon icon={faVenusMars} />
                                         <span>{usuarioSeleccionado.genero}</span>
                                     </div>
+                                    <div className="info-item">
+                                        <FontAwesomeIcon icon={faMapMarkerAlt} />
+                                        <span>{usuarioSeleccionado.direccion || 'No especificada'}</span>
+                                    </div>
                                 </div>
 
                                 <div className="info-section">
@@ -579,21 +633,165 @@ function AdminUsuariosPage() {
                                         <FontAwesomeIcon icon={faDumbbell} />
                                         <span>Última visita: {formatearFecha(usuarioSeleccionado.ultimaVisita)}</span>
                                     </div>
+                                    {usuarioSeleccionado.fechaNacimiento && (
+                                        <div className="info-item">
+                                            <FontAwesomeIcon icon={faCalendar} />
+                                            <span>Nacimiento: {formatearFecha(usuarioSeleccionado.fechaNacimiento)}</span>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
 
                             <div className="modal-actions">
-                                <button className="btn-primary">
-                                    <FontAwesomeIcon icon={faEdit} /> Editar Cliente
+                                <button 
+                                    className="btn-primary"
+                                    onClick={() => handleEditarUsuario(usuarioSeleccionado.id)}
+                                >
+                                    <FontAwesomeIcon icon={faEdit} /> Editar Usuario
                                 </button>
                                 <button className="btn-secondary">
                                     <FontAwesomeIcon icon={faEnvelope} /> Enviar Email
                                 </button>
-                                <button className="btn-danger">
-                                    <FontAwesomeIcon icon={faTrash} /> Eliminar Cliente
+                                <button 
+                                    className="btn-danger"
+                                    onClick={() => handleEliminar(usuarioSeleccionado.id)}
+                                >
+                                    <FontAwesomeIcon icon={faTrash} /> Eliminar Usuario
                                 </button>
                             </div>
                         </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Modal Crear Nuevo Usuario */}
+            {modalNuevoUsuario && (
+                <div className="modal-overlay" onClick={() => setModalNuevoUsuario(false)}>
+                    <div className="modal-content modal-large" onClick={e => e.stopPropagation()}>
+                        <button className="modal-close" onClick={() => setModalNuevoUsuario(false)}>×</button>
+                        <h2>Crear Nuevo Usuario</h2>
+                        
+                        <form onSubmit={handleCrearUsuario} className="form-nuevo-usuario">
+                            <div className="form-grid">
+                                <div className="form-group">
+                                    <label>Nombre *</label>
+                                    <input 
+                                        type="text" 
+                                        name="nombre" 
+                                        value={nuevoUsuario.nombre} 
+                                        onChange={handleNuevoUsuarioChange} 
+                                        required 
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label>Apellido *</label>
+                                    <input 
+                                        type="text" 
+                                        name="apellido" 
+                                        value={nuevoUsuario.apellido} 
+                                        onChange={handleNuevoUsuarioChange} 
+                                        required 
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label>Email *</label>
+                                    <input 
+                                        type="email" 
+                                        name="email" 
+                                        value={nuevoUsuario.email} 
+                                        onChange={handleNuevoUsuarioChange} 
+                                        required 
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label>Teléfono</label>
+                                    <input 
+                                        type="text" 
+                                        name="telefono" 
+                                        value={nuevoUsuario.telefono} 
+                                        onChange={handleNuevoUsuarioChange} 
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label>Dirección</label>
+                                    <input 
+                                        type="text" 
+                                        name="direccion" 
+                                        value={nuevoUsuario.direccion} 
+                                        onChange={handleNuevoUsuarioChange} 
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label>Fecha de nacimiento</label>
+                                    <input 
+                                        type="date" 
+                                        name="fechaNacimiento" 
+                                        value={nuevoUsuario.fechaNacimiento} 
+                                        onChange={handleNuevoUsuarioChange} 
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label>Género</label>
+                                    <select 
+                                        name="genero" 
+                                        value={nuevoUsuario.genero} 
+                                        onChange={handleNuevoUsuarioChange}
+                                    >
+                                        <option value="Masculino">Masculino</option>
+                                        <option value="Femenino">Femenino</option>
+                                        <option value="Otro">Otro</option>
+                                        <option value="No especificado">No especificado</option>
+                                    </select>
+                                </div>
+                                <div className="form-group">
+                                    <label>Rol</label>
+                                    <select 
+                                        name="rol" 
+                                        value={nuevoUsuario.rol} 
+                                        onChange={handleNuevoUsuarioChange}
+                                    >
+                                        <option value="CLIENTE">Cliente</option>
+                                        <option value="RECEPCIONISTA">Recepcionista</option>
+                                    </select>
+                                </div>
+                                <div className="form-group">
+                                    <label>Membresía</label>
+                                    <select 
+                                        name="membresia" 
+                                        value={nuevoUsuario.membresia} 
+                                        onChange={handleNuevoUsuarioChange}
+                                    >
+                                        <option value="Básica">Básica</option>
+                                        <option value="Premium">Premium</option>
+                                        <option value="VIP">VIP</option>
+                                    </select>
+                                </div>
+                                <div className="form-group">
+                                    <label>Estado</label>
+                                    <select 
+                                        name="estado" 
+                                        value={nuevoUsuario.estado} 
+                                        onChange={handleNuevoUsuarioChange}
+                                    >
+                                        <option value="Activo">Activo</option>
+                                        <option value="Inactivo">Inactivo</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div className="form-actions">
+                                <button 
+                                    type="button" 
+                                    className="btn-cancelar"
+                                    onClick={() => setModalNuevoUsuario(false)}
+                                >
+                                    <FontAwesomeIcon icon={faTimes} /> Cancelar
+                                </button>
+                                <button type="submit" className="btn-primary">
+                                    <FontAwesomeIcon icon={faPlus} /> Crear Usuario
+                                </button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             )}
@@ -604,56 +802,11 @@ function AdminUsuariosPage() {
                     <div className="footer-section">
                         <div className="logo-footer">
                             <Link to="/">
-                                <img src="/assets/Imagenes/logo.png" alt="Logo AresFitness" />
+                                <img src={logo} alt="Logo AresFitness" />
                             </Link>
                         </div>
                         <p>Transformando vidas a través del fitness desde 2020</p>
-                        <div className="footer-social">
-                            <a href="#" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
-                                <FontAwesomeIcon icon={faFacebookF} />
-                            </a>
-                            <a href="https://www.instagram.com/aresfitness.peru/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
-                                <FontAwesomeIcon icon={faInstagram} />
-                            </a>
-                            <a href="#" target="_blank" rel="noopener noreferrer" aria-label="TikTok">
-                                <FontAwesomeIcon icon={faTiktok} />
-                            </a>
-                            <a href="#" target="_blank" rel="noopener noreferrer" aria-label="Twitter">
-                                <FontAwesomeIcon icon={faTwitter} />
-                            </a>
-                        </div>
                     </div>
-
-                    <div className="footer-section">
-                        <h3>Enlaces rápidos</h3>
-                        <ul>
-                            <li><Link to="/">Inicio</Link></li>
-                            <li><Link to="/membresias">Planes</Link></li>
-                            <li><Link to="/ubicacion">Ubicación</Link></li>
-                            <li><Link to="/ejercicios">Ejercicios</Link></li>
-                        </ul>
-                    </div>
-
-                    <div className="footer-section">
-                        <h3>Contáctanos</h3>
-                        <div className="contact-info">
-                            <p><FontAwesomeIcon icon={faMapMarkerAlt} /> Av. Principal 123, Lima, Perú</p>
-                            <p><FontAwesomeIcon icon={faPhone} /> (01) 123-4567</p>
-                            <p><FontAwesomeIcon icon={faEnvelope} /> info@aresfitness.com</p>
-                            <p><FontAwesomeIcon icon={faWhatsapp} /> +51 987 654 321</p>
-                        </div>
-                    </div>
-
-                    <div className="footer-section">
-                        <h3>Horario de atención</h3>
-                        <p>Lunes a Viernes: 5:00 am - 11:00 pm</p>
-                        <p>Sábados: 6:00 am - 10:00 pm</p>
-                        <p>Domingos: 7:00 am - 9:00 pm</p>
-                    </div>
-                </div>
-
-                <div className="footer-bottom">
-                    <p>&copy; 2025 AresFitness. Todos los derechos reservados.</p>
                 </div>
             </footer>
         </div>

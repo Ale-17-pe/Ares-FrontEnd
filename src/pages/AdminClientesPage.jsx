@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { listarUsuarios } from '../services/usuarioService';
-import './AdminClientesPage.css';
+import './css/AdminClientesPage.css';
 
 function AdminClientesPage() {
     const [clientes, setClientes] = useState([]);

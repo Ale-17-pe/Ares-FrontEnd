@@ -1,5 +1,5 @@
 import React from "react";
-import "./HomePage.css"; 
+import "./css/HomePage.css"; 
 import logo from "../assets/Imagenes/logo.png";
 import cuerda from "../assets/Imagenes/Cuerda.jpg";
 import remo from "../assets/Imagenes/remo.jpg";

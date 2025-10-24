@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { listarPlanes} from "../services/membresiaService";
+import { listarPlanes } from "../services/membresiaService";
 import { Link, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import libro from '../assets/Imagenes/LibroR.png';
@@ -29,7 +29,7 @@ import {
     faTiktok,
     faWhatsapp
 } from '@fortawesome/free-brands-svg-icons';
-import "./PlanesPage.css";
+import "./css/PlanesPage.css";
 
 function PlanesPage() {
     const [planes, setPlanes] = useState([]);
@@ -227,7 +227,7 @@ function PlanesPage() {
                                 </div>
 
                                 <ul className="caracteristicas-list">
-                                    {plan.descripcion.split('. ').map((caracteristica, index) => (
+                                    {(plan.descripcion ? plan.descripcion.split('.  ') : []).map((caracteristica, index) => (
                                         caracteristica && <li key={index}>
                                             <FontAwesomeIcon icon={faCheck} className="check-icon" />
                                             {caracteristica}

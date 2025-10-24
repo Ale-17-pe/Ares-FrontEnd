@@ -27,7 +27,7 @@ import {
     faTiktok,
     faWhatsapp
 } from '@fortawesome/free-brands-svg-icons';
-import './UbicacionPage.css';
+import './css/UbicacionPage.css';
 
 function UbicacionPage() {
     const userMenuBtnRef = useRef(null);

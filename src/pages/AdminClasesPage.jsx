@@ -45,7 +45,7 @@ import {
     faTiktok,
     faWhatsapp
 } from '@fortawesome/free-brands-svg-icons';
-import './AdminClasesPage.css';
+import './css/AdminClasesPage.css';
 import logo from '../assets/Imagenes/logo.png'; // Agregar import del logo
 
 function AdminClasesPage() {

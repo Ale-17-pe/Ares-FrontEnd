@@ -11,7 +11,7 @@ import {
     faEye,
     faEyeSlash,
 } from '@fortawesome/free-solid-svg-icons';
-import './RegistroPage.css';
+import './css/RegistroPage.css';
 
 function RegistroPage() {
     const [usuario, setUsuario] = useState({
@@ -59,18 +59,20 @@ function RegistroPage() {
                 nombre: usuario.nombre,
                 apellido: usuario.apellido,
                 email: usuario.email,
-                password: usuario.password
+                password: usuario.password,
+                telefono: usuario.telefono,
+                direccion: usuario.direccion,
+                fechaNacimiento: usuario.fechaNacimiento,
+                genero: usuario.genero
             };
 
             await registrarUsuario(usuarioParaEnviar); // Enviamos el objeto correcto
 
             alert('Usuario registrado correctamente');
             setUsuario({
-                nombre: '',
-                apellido: '',
-                email: '',
-                password: '',
-                confirmPassword: ''
+                nombre: '', apellido: '', email: '', password: '',
+                confirmPassword: '', telefono: '', direccion: '',
+                fechaNacimiento: '', genero: ''
             });
             navigate('/login');
         } catch (error) {
@@ -147,6 +149,57 @@ function RegistroPage() {
                                     />
                                 </div>
 
+                                {/* Campo Teléfono */}
+                                <div className="registro-input-field">
+                                    <FontAwesomeIcon icon={faUser} />
+                                    <input
+                                        type="text"
+                                        name="telefono"
+                                        placeholder="   Teléfono"
+                                        value={usuario.telefono}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                </div>
+                                {/* Campo Dirección */}
+                                <div className="registro-input-field">
+                                    <FontAwesomeIcon icon={faUser} />
+                                    <input
+                                        type="text"
+                                        name="direccion"
+                                        placeholder="   Dirección"
+                                        value={usuario.direccion}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                </div>
+                                {/* Campo Fecha de Nacimiento */}
+                                <div className="registro-input-field">
+                                    <FontAwesomeIcon icon={faUser} />
+                                    <input
+                                        type="date"
+                                        name="fechaNacimiento"
+                                        placeholder="   Fecha de nacimiento"
+                                        value={usuario.fechaNacimiento}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                </div>
+                                {/* Campo Género */}
+                                <div className="registro-input-field">
+                                    <FontAwesomeIcon icon={faUser} />
+                                    <select
+                                        name="genero"
+                                        value={usuario.genero}
+                                        onChange={handleChange}
+                                        required
+                                    >
+                                        <option value="">Selecciona género</option>
+                                        <option value="Masculino">Masculino</option>
+                                        <option value="Femenino">Femenino</option>
+                                        <option value="Otro">Otro</option>
+                                    </select>
+                                </div>
                                 {/* Campo Contraseña */}
                                 <div className="registro-input-field">
                                     <FontAwesomeIcon icon={faLock} />
@@ -163,8 +216,8 @@ function RegistroPage() {
                                         className="registro-toggle-password"
                                         onClick={togglePasswordVisibility}
                                     >
-                    <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
-                  </span>
+                                        <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
+                                    </span>
                                 </div>
 
                                 {/* Campo Confirmar Contraseña */}
@@ -183,8 +236,8 @@ function RegistroPage() {
                                         className="registro-toggle-password"
                                         onClick={toggleConfirmPasswordVisibility}
                                     >
-                    <FontAwesomeIcon icon={showConfirmPassword ? faEyeSlash : faEye} />
-                  </span>
+                                        <FontAwesomeIcon icon={showConfirmPassword ? faEyeSlash : faEye} />
+                                    </span>
                                 </div>
 
                                 {/* Términos y condiciones */}

@@ -33,7 +33,7 @@ import {
     faTiktok,
     faWhatsapp
 } from '@fortawesome/free-brands-svg-icons';
-import './MisReservasPage.css';
+import './css/MisReservasPage.css';
 
 function MisReservasPage() {
     const [reservas, setReservas] = useState([]);

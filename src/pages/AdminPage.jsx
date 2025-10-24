@@ -8,12 +8,13 @@ import {
     faCog, faShieldAlt, faCalendarAlt, faMoneyBillWave, faChartBar,
     faCogs, faTachometerAlt, faIdCard, faReceipt, faUserCog,
     faClipboardList, faUsers, faMapMarkerAlt, faPhone, faEnvelope,
-    faArrowRight, faBell
+    faArrowRight, faBell,
+    faUsersBetweenLines
 } from '@fortawesome/free-solid-svg-icons';
 import {
     faFacebookF, faInstagram, faTwitter, faTiktok, faWhatsapp
 } from '@fortawesome/free-brands-svg-icons';
-import './AdminPage.css';
+import './css/AdminPage.css';
 
 function AdminPage() {
     const [notificaciones, setNotificaciones] = useState(3);
@@ -81,6 +82,14 @@ function AdminPage() {
 
     const modulosAdmin = [
         {
+            icono: faUserPlus,
+            titulo: 'Gestión de Usuarios',
+            descripcion: 'Crea, edita y elimina usuarios del sistema',
+            ruta: '/admin/usuarios',
+            color: '#00ffc8ff',
+            estadisticas: '1,247 clientes'
+        },
+         {
             icono: faUsers,
             titulo: 'Gestión de Clientes',
             descripcion: 'Administra toda la información de los clientes y sus membresías',
@@ -138,9 +147,9 @@ function AdminPage() {
         },
         {
             icono: faClipboardList,
-            titulo: 'Inventario',
-            descripcion: 'Control de equipos, suplementos y productos en stock',
-            ruta: '/admin/inventario',
+            titulo: 'Asistencias',
+            descripcion: 'Control de asistencias de los clientes al gimnasio',
+            ruta: '/admin/asistencias',
             color: '#e83e8c',
             estadisticas: '45 productos'
         }
@@ -252,7 +261,6 @@ function AdminPage() {
                 </div>
 
                 <div className="modulos-grid">
-                    {/* CORREGIDO: Usar modulosFiltrados en lugar de modulosAdmin */}
                     {modulosFiltrados.map((modulo, index) => (
                         <Link key={index} to={modulo.ruta} className="modulo-card">
                             <div className="modulo-header">
