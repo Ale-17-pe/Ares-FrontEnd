@@ -1,4 +1,4 @@
-// App.jsx
+// App.jsx - CORREGIDO
 import { Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import Layout from "./components/Layout";
@@ -13,10 +13,10 @@ import EjerciciosPage from "./pages/EjerciciosPage.jsx";
 import PlanesPage from "./pages/PlanesPage.jsx";
 import NosotrosPage from "./pages/NosotrosPage.jsx";
 import ComentariosSection from './pages/ComentariosSection.jsx';
-import AdminPage from './pages/AdminPage';
+import AdminPage from './pages/admin/AdminPage.jsx';
 import AdminPlanesPage from './pages/AdminPlanesPage';
 import AdminClientesPage from './pages/AdminClientesPage';
-import AdminSuscripcionesPage from './pages/AdminSuscripcionesPage'
+import AdminSuscripcionesPage from './pages/AdminSuscripcionesPage';
 import AdminClasesPage from './pages/AdminClasesPage';
 import ClasesPage from './pages/ClasesPage';
 import MisReservasPage from './pages/MisReservasPage';
@@ -29,13 +29,11 @@ import MisMembresiasPage from "./pages/MisMembresiasPage.jsx";
 import AdminUsuariosPage from "./pages/AdminUsuariosPage.jsx";
 import AdminEditarUsuario from './pages/AdminEditarUsuario.jsx';
 
-
 function App() {
   return (
     <AuthProvider>
       <Routes>
-
-
+        {/* Rutas públicas/normales */}
         <Route path="/" element={<Layout />}>
           <Route index element={<HomePage />} />
           <Route path="login" element={<LoginPage />} />
@@ -47,25 +45,26 @@ function App() {
           <Route path="nosotros" element={<NosotrosPage />} />
           <Route path="comentarios" element={<ComentariosSection />} />
 
-          <Route path="/membresias" element={<MisMembresiasPage />} />
-          <Route path="/clases" element={<ClasesPage />} />
-          <Route path="/reservas" element={<MisReservasPage />} />
-          <Route path="/asistencias" element={<MisAsistenciasPage />} />
-          <Route path="/pagos" element={<MisPagosPage />} />
-          <Route path="/calificaciones" element={<CalificacionesPage />} />
+          <Route path="membresias" element={<MisMembresiasPage />} />
+          <Route path="clases" element={<ClasesPage />} />
+          <Route path="reservas" element={<MisReservasPage />} />
+          <Route path="asistencias" element={<MisAsistenciasPage />} />
+          <Route path="pagos" element={<MisPagosPage />} />
+          <Route path="calificaciones" element={<CalificacionesPage />} />
         </Route>
 
-        <Route element={<AdminRoute />}>
-          <Route path="/admin" element={<AdminLayout />}>
-            <Route path="/admin" element={<AdminPage />} />
-            <Route path="/admin/planes" element={<AdminPlanesPage />} />
-            <Route path="/admin/clientes" element={<AdminClientesPage />} />
-            <Route path="/admin/suscripciones" element={<AdminSuscripcionesPage />} />
-            <Route path="/admin/clases" element={<AdminClasesPage />} />
-            <Route path="/admin/asistencias" element={<AdminAsistenciasPage />} />
-            <Route path="/admin/pagos" element={<AdminPagosPage />} />
-            <Route path="/admin/usuarios" element={<AdminUsuariosPage />} />
-            <Route path="/admin/usuarios/editar/:id" element={<AdminEditarUsuario />} />
+        {/* ✅ CORREGIDO: Rutas admin con paths relativos */}
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route element={<AdminRoute />}>
+            <Route index element={<AdminPage />} />  {/* ✅ index en lugar de path */}
+            <Route path="planes" element={<AdminPlanesPage />} />  {/* ✅ path relativo */}
+            <Route path="clientes" element={<AdminClientesPage />} />
+            <Route path="suscripciones" element={<AdminSuscripcionesPage />} />
+            <Route path="clases" element={<AdminClasesPage />} />
+            <Route path="asistencias" element={<AdminAsistenciasPage />} />
+            <Route path="pagos" element={<AdminPagosPage />} />
+            <Route path="usuarios" element={<AdminUsuariosPage />} />
+            <Route path="usuarios/editar/:id" element={<AdminEditarUsuario />} />
           </Route>
         </Route>
       </Routes>
@@ -73,4 +72,5 @@ function App() {
   );
 }
 
+// ✅ Asegúrate de que esta línea esté al final del archivo
 export default App;

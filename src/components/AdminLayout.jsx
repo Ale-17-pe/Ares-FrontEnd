@@ -1,4 +1,4 @@
-// src/components/AdminLayout.jsx
+// AdminLayout.jsx - VERSIÓN SIMPLIFICADA
 import React from 'react';
 import { Outlet } from 'react-router-dom';
 import AdminHeader from './AdminHeader';

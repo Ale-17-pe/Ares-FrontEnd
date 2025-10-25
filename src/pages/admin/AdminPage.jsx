@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import logo from "../assets/Imagenes/logo.png";
+import logo from "../admin/Imagenes/logo.png";
 
 import {
     faCrown, faUser, faSignInAlt, faUserPlus, faDumbbell, faChartLine,

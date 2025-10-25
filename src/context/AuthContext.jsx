@@ -6,59 +6,69 @@ const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
     const [usuario, setUsuario] = useState(null);
-    const [token, setToken] = useState(localStorage.getItem('jwtToken') || null);
+    const [token, setToken] = useState(null);
     const navigate = useNavigate();
 
+
     useEffect(() => {
-        const usuarioGuardado = localStorage.getItem('usuario');
         const tokenGuardado = localStorage.getItem('jwtToken');
-        
+        const usuarioGuardado = localStorage.getItem('usuario');
+
         if (usuarioGuardado && tokenGuardado) {
+            console.log('🔍 Restaurando estado desde localStorage...');
             setUsuario(JSON.parse(usuarioGuardado));
             setToken(tokenGuardado);
             apiClient.defaults.headers.common['Authorization'] = `Bearer ${tokenGuardado}`;
         }
     }, []);
 
-    const login = async (email, password) => {
+    const login = async (email, password) => {  
         try {
             const response = await apiClient.post('/auth/login', { email, password });
-            const { token, usuario: datosUsuario } = response.data;
+            const { token: newToken, usuario: datosUsuario } = response.data;
 
-            localStorage.setItem('jwtToken', token);
-            localStorage.setItem('usuario', JSON.stringify(datosUsuario));
-            apiClient.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-
-            setToken(token);
+            // ✅ CORREGIDO: Actualizar estado ANTES de localStorage
             setUsuario(datosUsuario);
+            setToken(newToken);
 
-            // Redirigir según el rol
-            if (datosUsuario.role === 'ADMIN') {
+            // Luego guardar en localStorage
+            localStorage.setItem('jwtToken', newToken);
+            localStorage.setItem('usuario', JSON.stringify(datosUsuario));
+            apiClient.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
+
+
+            // Redirigir
+            if (datosUsuario.role === 'ADMIN' || datosUsuario.role === 'RECEPCIONISTA') {
                 navigate('/admin');
             } else {
                 navigate('/dashboard');
             }
-            
+
             return { success: true };
         } catch (error) {
-            console.error("Error en el login:", error.response?.data || error.message);
-            return { 
-                success: false, 
-                error: error.response?.data?.error || "Error al iniciar sesión" 
+            console.error("Error en el login:", error);
+            return {
+                success: false,
+                error: error.response?.data?.error || "Error al iniciar sesión"
             };
         }
     };
 
     const logout = () => {
+        setUsuario(null);
+        setToken(null);
         localStorage.removeItem('jwtToken');
         localStorage.removeItem('usuario');
         delete apiClient.defaults.headers.common['Authorization'];
-        setToken(null);
-        setUsuario(null);
         navigate('/login');
     };
 
-    const authData = { usuario, token, login, logout };
+    const authData = {
+        usuario,
+        token,
+        login,
+        logout
+    };
 
     return (
         <AuthContext.Provider value={authData}>
@@ -68,5 +78,9 @@ export function AuthProvider({ children }) {
 }
 
 export function useAuth() {
-    return useContext(AuthContext);
-}   
+    const context = useContext(AuthContext);
+    if (!context) {
+        throw new Error('useAuth debe ser usado dentro de un AuthProvider');
+    }
+    return context;
+}
