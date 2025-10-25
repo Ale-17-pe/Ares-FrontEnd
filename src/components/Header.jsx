@@ -57,7 +57,7 @@ function Header() {
                 {!isAdmin && (
                     <nav className={`main-nav ${isMenuOpen ? 'active' : ''}`} ref={menuRef}>
                         <ul>
-                           
+
                             <li>
                                 <Link to="/ubicacion" onClick={closeMenu}>
                                     <FontAwesomeIcon icon={faMapMarkerAlt} /> UBICACIÓN
@@ -70,7 +70,7 @@ function Header() {
                             </li>
                             <li>
                                 <Link to="/planes" onClick={closeMenu}>
-                                    <FontAwesomeIcon icon={faIdCard } /> MEMBRESÍAS
+                                    <FontAwesomeIcon icon={faIdCard} /> MEMBRESÍAS
                                 </Link>
                             </li>
                             <li>
@@ -78,7 +78,7 @@ function Header() {
                                     <FontAwesomeIcon icon={faPeopleGroup} /> NOSOTROS
                                 </Link>
                             </li>
-                             <li>
+                            <li>
                                 <Link to="/comentarios" onClick={closeMenu}>
                                     <FontAwesomeIcon icon={faComment} /> COMENTARIOS
                                 </Link>
@@ -88,7 +88,7 @@ function Header() {
                         <div className="mobile-actions">
                             {!usuario ? (
                                 <div className="mobile-auth-buttons">
-                                   
+
                                     <li>
                                         <Link to="/ubicacion" onClick={closeMenu}>
                                             <FontAwesomeIcon icon={faMapMarkerAlt} /> UBICACIÓN
@@ -107,6 +107,11 @@ function Header() {
                                     <li>
                                         <Link to="/nosotros" onClick={closeMenu}>
                                             <FontAwesomeIcon icon={faUsers} /> NOSOTROS
+                                        </Link>
+                                    </li>
+                                    <li>
+                                        <Link to="/comentarios" onClick={closeMenu}>
+                                            <FontAwesomeIcon icon={faComment} /> COMENTARIOS
                                         </Link>
                                     </li>
                                     <Link to="/login" className="btn-login-mobile" onClick={closeMenu}>
