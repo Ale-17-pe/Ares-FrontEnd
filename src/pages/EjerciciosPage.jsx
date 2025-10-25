@@ -1,25 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import logo from "../assets/Imagenes/logo.png";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import {
-    faMapMarkerAlt,
-    faRunning,
-    faCrown,
-    faUser,
-    faSignInAlt,
-    faUserPlus,
     faSearch,
     faFilter,
     faDumbbell,
-    faHeartPulse,
     faPersonRunning,
     faFire,
     faClock,
     faChartLine,
     faPlay,
-    faPause,
     faStopwatch,
     faWeightHanging
 } from '@fortawesome/free-solid-svg-icons';
@@ -27,8 +19,7 @@ import {
     faFacebookF,
     faInstagram,
     faTwitter,
-    faTiktok,
-    faWhatsapp
+    faTiktok
 } from '@fortawesome/free-brands-svg-icons';
 import './css/EjerciciosPage.css';
 
@@ -36,6 +27,27 @@ function EjerciciosPage() {
     const [categoriaActiva, setCategoriaActiva] = useState('todos');
     const [busqueda, setBusqueda] = useState('');
     const [ejercicioSeleccionado, setEjercicioSeleccionado] = useState(null);
+
+    // Efecto para cerrar modal con tecla ESC
+    useEffect(() => {
+        const header = document.querySelector('.main-header');
+        if (header) {
+            if (ejercicioSeleccionado) {
+                header.style.display = 'none';
+            } else {
+                header.style.display = 'block';
+            }
+        }
+
+
+
+        return () => {
+            const header = document.querySelector('.main-header');
+            if (header) {
+                header.style.display = 'block';
+            }
+        };
+    }, [ejercicioSeleccionado]);
 
     // Datos de ejercicios
     const ejercicios = [
@@ -120,7 +132,7 @@ function EjerciciosPage() {
             duracion: "3 sets x 15 reps",
             descripcion: "Ejercicio aislado para desarrollar bíceps",
             instrucciones: [
-                "Párate con los pies separados al ancho de los hombros",
+                "Párate con los feet separados al ancho de los hombros",
                 "Agarra las mancuernas con las palmas hacia adelante",
                 "Flexiona los codos llevando las mancuernas hacia los hombros",
                 "Baja controladamente a la posición inicial"
@@ -185,7 +197,7 @@ function EjerciciosPage() {
             video: "https://www.youtube.com/embed/NnJEg52IGjI?si=-XhUI8PyUMuOrWeQ&amp;start=5",
             icono: faPersonRunning
         }
-    ];  
+    ];
 
     const categorias = [
         { id: 'todos', nombre: 'Todos', icono: faFilter, count: ejercicios.length },
@@ -201,7 +213,7 @@ function EjerciciosPage() {
     const ejerciciosFiltrados = ejercicios.filter(ejercicio => {
         const coincideCategoria = categoriaActiva === 'todos' || ejercicio.categoria === categoriaActiva;
         const coincideBusqueda = ejercicio.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
-                               ejercicio.descripcion.toLowerCase().includes(busqueda.toLowerCase());
+            ejercicio.descripcion.toLowerCase().includes(busqueda.toLowerCase());
         return coincideCategoria && coincideBusqueda;
     });
 
@@ -238,7 +250,7 @@ function EjerciciosPage() {
                             className="search-input"
                         />
                     </div>
-                    
+
                     <div className="categorias-filtro">
                         {categorias.map(categoria => (
                             <button
@@ -261,8 +273,8 @@ function EjerciciosPage() {
                     <h2>EJERCICIOS {categoriaActiva !== 'todos' ? categorias.find(c => c.id === categoriaActiva)?.nombre.toUpperCase() : ''}</h2>
                     <div className="title-line"></div>
                     <p>
-                        {categoriaActiva === 'todos' 
-                            ? 'Explora nuestra completa biblioteca de ejercicios' 
+                        {categoriaActiva === 'todos'
+                            ? 'Explora nuestra completa biblioteca de ejercicios'
                             : `Ejercicios específicos para ${categorias.find(c => c.id === categoriaActiva)?.nombre.toLowerCase()}`
                         }
                     </p>
@@ -273,15 +285,15 @@ function EjerciciosPage() {
                         ejerciciosFiltrados.map(ejercicio => (
                             <div key={ejercicio.id} className="ejercicio-card">
                                 <div className="ejercicio-imagen">
-                                    <img 
-                                        src={ejercicio.imagen} 
+                                    <img
+                                        src={ejercicio.imagen}
                                         alt={ejercicio.nombre}
                                         onError={(e) => {
                                             e.target.src = 'https://static.strengthlevel.com/images/exercises/bench-press/bench-press-800.jpg';
                                         }}
                                     />
                                     <div className="ejercicio-overlay">
-                                        <button 
+                                        <button
                                             className="btn-ver-detalles"
                                             onClick={() => abrirModal(ejercicio)}
                                         >
@@ -292,15 +304,15 @@ function EjerciciosPage() {
                                         {ejercicio.dificultad}
                                     </div>
                                 </div>
-                                
+
                                 <div className="ejercicio-content">
                                     <div className="ejercicio-header">
                                         <FontAwesomeIcon icon={ejercicio.icono} className="ejercicio-icon" />
                                         <h3>{ejercicio.nombre}</h3>
                                     </div>
-                                    
+
                                     <p className="ejercicio-descripcion">{ejercicio.descripcion}</p>
-                                    
+
                                     <div className="ejercicio-meta">
                                         <div className="meta-item">
                                             <FontAwesomeIcon icon={faClock} />
@@ -311,8 +323,8 @@ function EjerciciosPage() {
                                             <span>{ejercicio.categoria}</span>
                                         </div>
                                     </div>
-                                    
-                                    <button 
+
+                                    <button
                                         className="btn-detalles"
                                         onClick={() => abrirModal(ejercicio)}
                                     >
@@ -331,12 +343,18 @@ function EjerciciosPage() {
                 </div>
             </section>
 
-            {/* Modal de Detalles del Ejercicio */}
             {ejercicioSeleccionado && (
                 <div className="modal-overlay" onClick={cerrarModal}>
+                    <button 
+            className="modal-close-left" 
+            onClick={cerrarModal}
+            aria-label="Cerrar modal"
+            title="Cerrar"
+        >
+            ×
+        </button>
+
                     <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-                        <button className="modal-close" onClick={cerrarModal}>×</button>
-                        
                         <div className="modal-header">
                             <FontAwesomeIcon icon={ejercicioSeleccionado.icono} />
                             <h2>{ejercicioSeleccionado.nombre}</h2>
@@ -351,6 +369,7 @@ function EjerciciosPage() {
                                     src={ejercicioSeleccionado.video}
                                     title={`Video de ${ejercicioSeleccionado.nombre}`}
                                     frameBorder="0"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                                     allowFullScreen
                                 ></iframe>
                             </div>
@@ -430,7 +449,7 @@ function EjerciciosPage() {
 
                     <div className="footer-section">
                         <h3>Contáctanos</h3>
-                
+                        {/* Agrega aquí tu información de contacto */}
                     </div>
 
                     <div className="footer-section">
