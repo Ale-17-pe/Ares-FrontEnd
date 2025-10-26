@@ -73,7 +73,7 @@ function HomePage() {
             <section
                 className="hero"
                 style={{
-                    background: `linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url(https://i.ytimg.com/vi/9JX0XBgaiSg/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLD1ALDW6_eHR-e_IMW2ppCVuOmbPA) no-repeat center center/cover`,
+                    background: `linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.31)), url(https://image-cdn.essentiallysports.com/wp-content/uploads/WhatsApp-Image-2023-03-14-at-3.38.45-PM.jpeg?width=600) no-repeat center center/cover`,
                 }}
             >
                 <div className="hero-overlay">
